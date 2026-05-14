@@ -30,11 +30,11 @@
     }
   }
   html { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  body { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  body { max-width: 800px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
   header { margin-bottom: 2rem; }
   header h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
   header p { font-size: 13px; color: var(--text2); margin-top: 4px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.75rem; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.75rem; }
   .stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
   .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
   .stat-val { font-size: 26px; font-weight: 300; font-family: 'DM Mono', monospace; }
@@ -47,22 +47,39 @@
   .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
   .btn-new { height: 34px; padding: 0 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: opacity 0.15s; }
   .btn-new:hover { opacity: 0.85; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 480px; border: 0.5px solid var(--border2); max-height: 90vh; overflow-y: auto; }
+  .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 500px; border: 0.5px solid var(--border2); max-height: 92vh; overflow-y: auto; }
   .modal h2 { font-size: 16px; font-weight: 500; margin-bottom: 1.25rem; }
   .field { margin-bottom: 12px; }
   .field label { display: block; font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
   .field input, .field select, .field textarea { width: 100%; height: 36px; padding: 0 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--surface2); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color 0.15s; }
   .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--text2); }
-  .field textarea { height: 90px; padding: 8px 10px; resize: vertical; line-height: 1.5; }
+  .field textarea { height: 80px; padding: 8px 10px; resize: vertical; line-height: 1.5; }
   .field-row { display: flex; gap: 10px; }
   .field-row .field { flex: 1; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
   .btn-cancel { height: 34px; padding: 0 14px; background: transparent; border: 0.5px solid var(--border2); border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text2); font-family: 'DM Sans', sans-serif; }
-  .btn-cancel:hover { color: var(--text); }
   .btn-save { height: 34px; padding: 0 18px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; }
-  .btn-save:hover { opacity: 0.85; }
+  .modal-divider { border: none; border-top: 0.5px solid var(--border); margin: 1rem 0; }
+  .modal-section-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+
+  /* Phase info box */
+  .phase-info { background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+  .phase-info i { font-size: 16px; color: var(--text3); }
+
+  /* Response history */
+  .response-log { margin-top: 6px; }
+  .response-entry { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; color: var(--text2); }
+  .response-entry:last-child { border-bottom: none; }
+  .resp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .resp-dot.yes { background: var(--ok); }
+  .resp-dot.no { background: var(--urgent); }
+  .resp-phase { font-weight: 500; color: var(--text); }
+
+  /* Cards */
   .section-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; margin-top: 1.5rem; }
   .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.1rem; margin-bottom: 8px; transition: border-color 0.15s; }
   .card:hover { border-color: var(--border2); }
@@ -76,7 +93,7 @@
   .av3 { background: #FAECE7; color: #712B13; }
   .av4 { background: #FAEEDA; color: #633806; }
   .card-body { flex: 1; min-width: 0; }
-  .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+  .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
   .card-name { font-size: 14px; font-weight: 500; }
   .card-company { font-size: 12px; color: var(--text2); }
   .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
@@ -84,20 +101,46 @@
   .badge-today { background: var(--today-bg); color: var(--today); }
   .badge-soon { background: var(--ok-bg); color: var(--ok); }
   .badge-high { background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border2); }
-  .card-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--text2); margin-top: 4px; align-items: center; }
+  .card-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--text2); margin-top: 4px; align-items: center; }
   .card-meta span { display: flex; align-items: center; gap: 4px; }
   .topic-pill { background: var(--surface2); border-radius: 99px; padding: 1px 8px; font-size: 11px; color: var(--text2); }
+
+  /* Phase badge */
+  .phase-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 500; border: 0.5px solid var(--border2); }
+  .phase-1 { background: #EEF4FF; color: #2B5CB8; border-color: #C5D8F8; }
+  .phase-2 { background: #F4EEFF; color: #5B35A8; border-color: #D8C5F8; }
+  .phase-3 { background: #FFF4EE; color: #B85B2B; border-color: #F8D8C5; }
+
+  /* Response mini log in card */
+  .card-resp-log { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .resp-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 99px; font-size: 11px; background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); }
+  .resp-chip.yes { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
+  .resp-chip.no { background: var(--urgent-bg); color: var(--urgent); border-color: transparent; }
+
+  /* Note */
   .card-note-wrap { margin-top: 6px; }
   .card-note { font-size: 12px; color: var(--text3); font-style: italic; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
   .card-note.collapsed { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; white-space: normal; }
   .note-toggle { background: none; border: none; cursor: pointer; font-size: 11px; color: var(--text2); font-family: 'DM Sans', sans-serif; padding: 2px 0 0; display: inline-flex; align-items: center; gap: 3px; }
   .note-toggle:hover { color: var(--text); }
-  .card-actions { display: flex; gap: 6px; flex-shrink: 0; }
-  .btn-icon { width: 32px; height: 32px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--text2); transition: all 0.15s; }
+
+  /* Card actions */
+  .card-actions { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+  .btn-icon { width: 32px; height: 32px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text2); transition: all 0.15s; }
   .btn-icon:hover { background: var(--surface2); border-color: var(--border2); }
   .btn-check:hover { color: var(--ok); border-color: var(--ok); }
   .btn-edit:hover { color: #3C3489; border-color: #3C3489; }
   .btn-trash:hover { color: var(--urgent); border-color: var(--urgent); }
+  .btn-resp-yes { font-size: 12px; height: 28px; width: auto; padding: 0 10px; border-radius: 99px; gap: 4px; color: var(--ok); border-color: var(--ok); }
+  .btn-resp-yes:hover { background: var(--ok-bg); }
+  .btn-resp-no { font-size: 12px; height: 28px; width: auto; padding: 0 10px; border-radius: 99px; gap: 4px; color: var(--urgent); border-color: var(--urgent); }
+  .btn-resp-no:hover { background: var(--urgent-bg); }
+
+  /* Response action row */
+  .card-action-row { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .card-action-label { font-size: 12px; color: var(--text2); }
+  .card-action-btns { display: flex; gap: 6px; }
+
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
   .empty i { font-size: 32px; display: block; margin-bottom: 10px; }
   .empty p { font-size: 14px; }
@@ -123,6 +166,8 @@
   </button>
 </div>
 <div id="list"></div>
+
+<!-- Main modal -->
 <div class="modal-overlay" id="overlay" onclick="handleOverlayClick(event)">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <h2 id="modal-title">Nuevo cliente</h2>
@@ -135,8 +180,17 @@
       <div class="field"><label>Fecha de la charla</label><input id="fTalkDate" type="date" /></div>
       <div class="field"><label>Recordarme el</label><input id="fRemind" type="date" /></div>
     </div>
-    <div class="field"><label>Prioridad</label>
-      <select id="fPriority"><option value="normal">Normal</option><option value="high">Alta</option></select>
+    <div class="field-row">
+      <div class="field"><label>Fase</label>
+        <select id="fPhase">
+          <option value="1">Fase 1 — Primer contacto</option>
+          <option value="2">Fase 2 — Seguimiento (3 días)</option>
+          <option value="3">Fase 3 — Mensaje de nutrición</option>
+        </select>
+      </div>
+      <div class="field"><label>Prioridad</label>
+        <select id="fPriority"><option value="normal">Normal</option><option value="high">Alta</option></select>
+      </div>
     </div>
     <div class="field"><label>Notas</label><textarea id="fNote" placeholder="Detalles importantes de la conversación..."></textarea></div>
     <div class="modal-actions">
@@ -145,14 +199,51 @@
     </div>
   </div>
 </div>
+
+<!-- No-response modal -->
+<div class="modal-overlay" id="noRespOverlay" onclick="handleNoRespOverlayClick(event)">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2 id="noRespTitle">No respondió — avanzar fase</h2>
+    <div class="phase-info" id="noRespInfo"><i class="ti ti-info-circle" aria-hidden="true"></i><span></span></div>
+    <hr class="modal-divider" />
+    <div class="modal-section-title">Próximo recordatorio</div>
+    <div class="field"><label>Fecha sugerida (puedes cambiarla)</label><input id="noRespDate" type="date" /></div>
+    <div class="field"><label>Nota sobre este intento (opcional)</label><input id="noRespNote" type="text" placeholder="Ej: Dejé mensaje de voz" /></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeNoRespModal()">Cancelar</button>
+      <button class="btn-save" onclick="confirmNoResp()">Confirmar y avanzar</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const COLORS = ['av0','av1','av2','av3','av4'];
-  let clients = JSON.parse(localStorage.getItem('sc_clients') || '[]');
+  const PHASES = {
+    1: { label: 'Fase 1 — Primer contacto', next: 2, days: 3 },
+    2: { label: 'Fase 2 — Seguimiento', next: 3, days: 2 },
+    3: { label: 'Fase 3 — Nutrición', next: null, days: null },
+  };
+
+  let clients = JSON.parse(localStorage.getItem('sc_clients_v2') || '[]');
   let currentFilter = 'all';
   let editingId = null;
   let expandedNotes = new Set();
-  function persist() { localStorage.setItem('sc_clients', JSON.stringify(clients)); }
+  let noRespClientId = null;
+
+  function persist() { localStorage.setItem('sc_clients_v2', JSON.stringify(clients)); }
   function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+  function addBusinessDays(fromStr, days) {
+    let d = new Date(fromStr + 'T00:00:00');
+    let added = 0;
+    while (added < days) {
+      d.setDate(d.getDate() + 1);
+      const dow = d.getDay();
+      if (dow !== 0 && dow !== 6) added++;
+    }
+    return d.toISOString().split('T')[0];
+  }
+
   function daysDiff(d) {
     if (!d) return null;
     return Math.round((new Date(d+'T00:00:00') - new Date(todayStr()+'T00:00:00')) / 86400000);
@@ -164,8 +255,11 @@
     if (c.remindDate && d < 0) return 'urgent';
     if (c.remindDate && d === 0) return 'today';
     if (c.remindDate && d <= 3) return 'soon';
+    if (c.remindDate) return 'future';
     return 'normal';
   }
+
+  // Main modal
   function openModal(id = null) {
     editingId = id;
     document.getElementById('modal-title').textContent = id ? 'Editar cliente' : 'Nuevo cliente';
@@ -176,12 +270,14 @@
       document.getElementById('fTopic').value = c.topic || '';
       document.getElementById('fTalkDate').value = c.talkDate || '';
       document.getElementById('fRemind').value = c.remindDate || '';
+      document.getElementById('fPhase').value = c.phase || '1';
       document.getElementById('fPriority').value = c.priority || 'normal';
       document.getElementById('fNote').value = c.note || '';
     } else {
       ['fName','fCompany','fTopic','fNote'].forEach(i => document.getElementById(i).value = '');
       document.getElementById('fTalkDate').value = todayStr();
-      document.getElementById('fRemind').value = '';
+      document.getElementById('fRemind').value = addBusinessDays(todayStr(), 3);
+      document.getElementById('fPhase').value = '1';
       document.getElementById('fPriority').value = 'normal';
     }
     document.getElementById('overlay').classList.add('open');
@@ -189,7 +285,7 @@
   }
   function closeModal() { document.getElementById('overlay').classList.remove('open'); editingId = null; }
   function handleOverlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
   function saveClient() {
     const name = document.getElementById('fName').value.trim();
     if (!name) { document.getElementById('fName').focus(); return; }
@@ -199,6 +295,7 @@
       topic: document.getElementById('fTopic').value.trim(),
       talkDate: document.getElementById('fTalkDate').value || todayStr(),
       remindDate: document.getElementById('fRemind').value || '',
+      phase: parseInt(document.getElementById('fPhase').value),
       priority: document.getElementById('fPriority').value,
       note: document.getElementById('fNote').value.trim(),
     };
@@ -206,13 +303,73 @@
       const idx = clients.findIndex(c => c.id === editingId);
       if (idx !== -1) clients[idx] = { ...clients[idx], ...data };
     } else {
-      clients.push({ id: Date.now(), ...data });
+      clients.push({ id: Date.now(), responses: [], ...data });
     }
     persist(); closeModal(); render();
   }
-  function markDone(id) { clients = clients.filter(c => c.id !== id); persist(); render(); }
+
+  // Responded — remove client
+  function markDone(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    c.responses = c.responses || [];
+    c.responses.push({ date: todayStr(), responded: true, phase: c.phase, note: 'Respondió ✓' });
+    clients = clients.filter(x => x.id !== id);
+    persist(); render();
+  }
+
   function del(id) { if (!confirm('¿Eliminar este cliente?')) return; clients = clients.filter(c => c.id !== id); persist(); render(); }
   function toggleNote(id) { expandedNotes.has(id) ? expandedNotes.delete(id) : expandedNotes.add(id); render(); }
+
+  // No response modal
+  function openNoResp(id) {
+    noRespClientId = id;
+    const c = clients.find(x => x.id === id);
+    const phase = c.phase || 1;
+    const phaseData = PHASES[phase];
+    const nextPhase = phaseData.next;
+
+    document.getElementById('noRespTitle').textContent = nextPhase
+      ? `No respondió — pasar a ${PHASES[nextPhase].label}`
+      : 'No respondió — Fase 3 (última)';
+
+    const infoSpan = document.querySelector('#noRespInfo span');
+    if (nextPhase) {
+      infoSpan.textContent = `Actualmente en ${phaseData.label}. Se avanzará a ${PHASES[nextPhase].label} y el recordatorio se calculará automáticamente en días hábiles.`;
+    } else {
+      infoSpan.textContent = `Ya estás en la Fase 3 (Nutrición). Se registrará el intento y puedes ajustar el próximo recordatorio.`;
+    }
+
+    const daysToAdd = nextPhase ? PHASES[nextPhase].days : 7;
+    document.getElementById('noRespDate').value = addBusinessDays(todayStr(), daysToAdd);
+    document.getElementById('noRespNote').value = '';
+    document.getElementById('noRespOverlay').classList.add('open');
+  }
+
+  function closeNoRespModal() { document.getElementById('noRespOverlay').classList.remove('open'); noRespClientId = null; }
+  function handleNoRespOverlayClick(e) { if (e.target === document.getElementById('noRespOverlay')) closeNoRespModal(); }
+
+  function confirmNoResp() {
+    const c = clients.find(x => x.id === noRespClientId);
+    if (!c) return;
+    const phase = c.phase || 1;
+    const phaseData = PHASES[phase];
+    c.responses = c.responses || [];
+    c.responses.push({
+      date: todayStr(),
+      responded: false,
+      phase,
+      note: document.getElementById('noRespNote').value.trim() || 'Sin respuesta'
+    });
+    if (phaseData.next) c.phase = phaseData.next;
+    c.remindDate = document.getElementById('noRespDate').value;
+    persist(); closeNoRespModal(); render();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeNoRespModal(); }
+  });
+
   document.getElementById('filters').addEventListener('click', e => {
     const btn = e.target.closest('.filter-btn');
     if (!btn) return;
@@ -221,6 +378,7 @@
     btn.classList.add('active');
     render();
   });
+
   function render() {
     const urgent = clients.filter(c => getStatus(c) === 'urgent').length;
     const todayC = clients.filter(c => getStatus(c) === 'today').length;
@@ -230,24 +388,29 @@
       <div class="stat"><div class="stat-label">Recordar hoy</div><div class="stat-val ${todayC>0?'amber':''}">${todayC}</div></div>
       <div class="stat"><div class="stat-label">Alta prioridad</div><div class="stat-val">${clients.filter(c=>c.priority==='high').length}</div></div>
     `;
+
     let filtered = clients;
     if (currentFilter === 'urgent') filtered = clients.filter(c => getStatus(c) === 'urgent');
     else if (currentFilter === 'today') filtered = clients.filter(c => getStatus(c) === 'today');
     else if (currentFilter === 'soon') filtered = clients.filter(c => ['today','soon'].includes(getStatus(c)));
     else if (currentFilter === 'high') filtered = clients.filter(c => c.priority === 'high');
+
     const sorted = [...filtered].sort((a,b) => {
-      const s = {urgent:0,today:1,soon:2,normal:3};
+      const s = {urgent:0,today:1,soon:2,future:3,normal:4};
       const d = s[getStatus(a)] - s[getStatus(b)];
       if (d !== 0) return d;
       return a.priority==='high' && b.priority!=='high' ? -1 : 1;
     });
+
     if (!sorted.length) {
       document.getElementById('list').innerHTML = `<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentFilter==='all'?'Aún no hay clientes. Presiona "Agregar cliente" para empezar.':'No hay clientes en este filtro.'}</p></div>`;
       return;
     }
-    const groups = {urgent:[],today:[],soon:[],normal:[]};
+
+    const groups = {urgent:[],today:[],soon:[],future:[],normal:[]};
     sorted.forEach(c => groups[getStatus(c)].push(c));
-    const labels = {urgent:'Vencidos',today:'Recordar hoy',soon:'Próximos días',normal:'Sin fecha de recordatorio'};
+    const labels = {urgent:'Vencidos',today:'Recordar hoy',soon:'Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
+
     let html = '';
     for (const [key, label] of Object.entries(labels)) {
       if (!groups[key].length) continue;
@@ -255,18 +418,66 @@
       html += groups[key].map(c => {
         const status = getStatus(c);
         const diff = daysDiff(c.remindDate);
-        let badge = '';
-        if (status==='urgent') badge = `<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
-        else if (status==='today') badge = `<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
-        else if (status==='soon') badge = `<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
+        let timeBadge = '';
+        if (status==='urgent') timeBadge = `<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
+        else if (status==='today') timeBadge = `<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
+        else if (status==='soon') timeBadge = `<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
+        else if (status==='future') timeBadge = `<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
+
+        const phase = c.phase || 1;
+        const phaseBadge = `<span class="phase-badge phase-${phase}"><i class="ti ti-${phase===1?'send':phase===2?'refresh':'heart'}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
         const prioBadge = c.priority==='high' ? `<span class="badge badge-high">Alta prioridad</span>` : '';
+
         const expanded = expandedNotes.has(c.id);
         const noteHtml = c.note ? `<div class="card-note-wrap"><div class="card-note ${expanded?'':'collapsed'}">${c.note}</div><button class="note-toggle" onclick="toggleNote(${c.id})"><i class="ti ti-chevron-${expanded?'up':'down'}" aria-hidden="true"></i> ${expanded?'Ver menos':'Ver nota completa'}</button></div>` : '';
-        return `<div class="card ${status==='urgent'?'is-urgent':status==='today'?'is-today':''}"><div class="card-main"><div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div><div class="card-body"><div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${badge}${prioBadge}</div><div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> Charla: ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> Recordar: ${c.remindDate}</span>`:''}</div>${noteHtml}</div><div class="card-actions"><button class="btn-icon btn-check" onclick="markDone(${c.id})" title="Ya respondió"><i class="ti ti-check" aria-hidden="true"></i></button><button class="btn-icon btn-edit" onclick="openModal(${c.id})" title="Editar"><i class="ti ti-pencil" aria-hidden="true"></i></button><button class="btn-icon btn-trash" onclick="del(${c.id})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button></div></div></div>`;
+
+        const responses = c.responses || [];
+        const respChips = responses.slice(-3).map(r =>
+          `<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`
+        ).join('');
+        const respLogHtml = responses.length ? `<div class="card-resp-log">${respChips}${responses.length>3?`<span class="resp-chip">+${responses.length-3} más</span>`:''}</div>` : '';
+
+        const nextPhaseInfo = PHASES[phase].next ? `Registrar intento y pasar a ${PHASES[PHASES[phase].next].label}` : 'Registrar intento (Fase 3 final)';
+
+        return `<div class="card ${status==='urgent'?'is-urgent':status==='today'?'is-today':''}">
+          <div class="card-main">
+            <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
+            <div class="card-body">
+              <div class="card-top">
+                <span class="card-name">${c.name}</span>
+                ${c.company?`<span class="card-company">${c.company}</span>`:''}
+                ${phaseBadge}${timeBadge}${prioBadge}
+              </div>
+              <div class="card-meta">
+                ${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}
+                ${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}
+                ${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> Recordar: ${c.remindDate}</span>`:''}
+              </div>
+              ${respLogHtml}
+              ${noteHtml}
+              <div class="card-action-row">
+                <span class="card-action-label">¿Qué pasó?</span>
+                <div class="card-action-btns">
+                  <button class="btn-icon btn-resp-yes" onclick="markDone(${c.id})" title="Respondió">
+                    <i class="ti ti-check" aria-hidden="true"></i> Respondió
+                  </button>
+                  <button class="btn-icon btn-resp-no" onclick="openNoResp(${c.id})" title="${nextPhaseInfo}">
+                    <i class="ti ti-x" aria-hidden="true"></i> No respondió
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-icon btn-edit" onclick="openModal(${c.id})" title="Editar"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+              <button class="btn-icon btn-trash" onclick="del(${c.id})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>`;
       }).join('');
     }
     document.getElementById('list').innerHTML = html;
   }
+
   render();
 </script>
 </body>
