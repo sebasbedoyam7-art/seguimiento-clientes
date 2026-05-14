@@ -31,9 +31,11 @@
   }
   html { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
   body { max-width: 800px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-  header { margin-bottom: 2rem; }
+  header { margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
   header h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
   header p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .btn-settings { width: 34px; height: 34px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); font-size: 17px; flex-shrink: 0; margin-top: 2px; }
+  .btn-settings:hover { background: var(--surface2); }
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.75rem; }
   .stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
   .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
@@ -45,10 +47,16 @@
   .filter-btn { height: 30px; padding: 0 12px; border: 0.5px solid var(--border); border-radius: 99px; background: transparent; cursor: pointer; font-size: 12px; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
   .filter-btn:hover { border-color: var(--border2); color: var(--text); }
   .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .btn-new { height: 34px; padding: 0 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: opacity 0.15s; }
+  .btn-new { height: 34px; padding: 0 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .btn-new:hover { opacity: 0.85; }
 
-  /* Modal */
+  /* Notification banner */
+  .notif-banner { background: var(--today-bg); border: 0.5px solid #E8C060; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 1rem; display: none; align-items: center; gap: 10px; font-size: 13px; color: var(--today); }
+  .notif-banner.show { display: flex; }
+  .notif-banner i { font-size: 18px; flex-shrink: 0; }
+  .notif-banner strong { font-weight: 500; }
+
+  /* Modals */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 500px; border: 0.5px solid var(--border2); max-height: 92vh; overflow-y: auto; }
@@ -65,19 +73,27 @@
   .btn-save { height: 34px; padding: 0 18px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; }
   .modal-divider { border: none; border-top: 0.5px solid var(--border); margin: 1rem 0; }
   .modal-section-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .phase-info { background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text2); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+  .phase-info i { font-size: 16px; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
 
-  /* Phase info box */
-  .phase-info { background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
-  .phase-info i { font-size: 16px; color: var(--text3); }
-
-  /* Response history */
-  .response-log { margin-top: 6px; }
-  .response-entry { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; color: var(--text2); }
-  .response-entry:last-child { border-bottom: none; }
-  .resp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .resp-dot.yes { background: var(--ok); }
-  .resp-dot.no { background: var(--urgent); }
-  .resp-phase { font-weight: 500; color: var(--text); }
+  /* Settings modal */
+  .settings-section { margin-bottom: 1.25rem; }
+  .settings-section h3 { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+  .settings-row label { font-size: 13px; color: var(--text2); }
+  .toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--surface2); border-radius: 99px; border: 0.5px solid var(--border2); cursor: pointer; transition: 0.2s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; bottom: 2px; background: var(--text3); border-radius: 50%; transition: 0.2s; }
+  .toggle input:checked + .toggle-slider { background: var(--text); border-color: var(--text); }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: var(--bg); }
+  .slack-status { font-size: 12px; padding: 6px 10px; border-radius: var(--radius); margin-top: 6px; }
+  .slack-status.ok { background: var(--ok-bg); color: var(--ok); }
+  .slack-status.err { background: var(--urgent-bg); color: var(--urgent); }
+  .slack-help { font-size: 12px; color: var(--text3); margin-top: 6px; line-height: 1.5; }
+  .slack-help a { color: var(--text2); }
+  .btn-test { height: 30px; padding: 0 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; cursor: pointer; font-size: 12px; color: var(--text2); font-family: 'DM Sans', sans-serif; }
+  .btn-test:hover { background: var(--surface2); }
 
   /* Cards */
   .section-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; margin-top: 1.5rem; }
@@ -87,60 +103,36 @@
   .card.is-today { border-left: 2.5px solid var(--today); }
   .card-main { display: flex; align-items: flex-start; gap: 12px; }
   .avatar { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; margin-top: 1px; }
-  .av0 { background: #E6F1FB; color: #0C447C; }
-  .av1 { background: #E1F5EE; color: #085041; }
-  .av2 { background: #EEEDFE; color: #3C3489; }
-  .av3 { background: #FAECE7; color: #712B13; }
-  .av4 { background: #FAEEDA; color: #633806; }
+  .av0{background:#E6F1FB;color:#0C447C} .av1{background:#E1F5EE;color:#085041} .av2{background:#EEEDFE;color:#3C3489} .av3{background:#FAECE7;color:#712B13} .av4{background:#FAEEDA;color:#633806}
   .card-body { flex: 1; min-width: 0; }
   .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
   .card-name { font-size: 14px; font-weight: 500; }
   .card-company { font-size: 12px; color: var(--text2); }
   .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
-  .badge-urgent { background: var(--urgent-bg); color: var(--urgent); }
-  .badge-today { background: var(--today-bg); color: var(--today); }
-  .badge-soon { background: var(--ok-bg); color: var(--ok); }
-  .badge-high { background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border2); }
+  .badge-urgent{background:var(--urgent-bg);color:var(--urgent)} .badge-today{background:var(--today-bg);color:var(--today)} .badge-soon{background:var(--ok-bg);color:var(--ok)}
+  .badge-high{background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
   .card-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--text2); margin-top: 4px; align-items: center; }
   .card-meta span { display: flex; align-items: center; gap: 4px; }
   .topic-pill { background: var(--surface2); border-radius: 99px; padding: 1px 8px; font-size: 11px; color: var(--text2); }
-
-  /* Phase badge */
-  .phase-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 500; border: 0.5px solid var(--border2); }
-  .phase-1 { background: #EEF4FF; color: #2B5CB8; border-color: #C5D8F8; }
-  .phase-2 { background: #F4EEFF; color: #5B35A8; border-color: #D8C5F8; }
-  .phase-3 { background: #FFF4EE; color: #B85B2B; border-color: #F8D8C5; }
-
-  /* Response mini log in card */
+  .phase-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 500; border: 0.5px solid; }
+  .phase-1{background:#EEF4FF;color:#2B5CB8;border-color:#C5D8F8} .phase-2{background:#F4EEFF;color:#5B35A8;border-color:#D8C5F8} .phase-3{background:#FFF4EE;color:#B85B2B;border-color:#F8D8C5}
   .card-resp-log { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
   .resp-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 99px; font-size: 11px; background: var(--surface2); color: var(--text3); border: 0.5px solid var(--border); }
-  .resp-chip.yes { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
-  .resp-chip.no { background: var(--urgent-bg); color: var(--urgent); border-color: transparent; }
-
-  /* Note */
+  .resp-chip.yes{background:var(--ok-bg);color:var(--ok);border-color:transparent} .resp-chip.no{background:var(--urgent-bg);color:var(--urgent);border-color:transparent}
   .card-note-wrap { margin-top: 6px; }
   .card-note { font-size: 12px; color: var(--text3); font-style: italic; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
   .card-note.collapsed { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; white-space: normal; }
   .note-toggle { background: none; border: none; cursor: pointer; font-size: 11px; color: var(--text2); font-family: 'DM Sans', sans-serif; padding: 2px 0 0; display: inline-flex; align-items: center; gap: 3px; }
-  .note-toggle:hover { color: var(--text); }
-
-  /* Card actions */
-  .card-actions { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
-  .btn-icon { width: 32px; height: 32px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text2); transition: all 0.15s; }
-  .btn-icon:hover { background: var(--surface2); border-color: var(--border2); }
-  .btn-check:hover { color: var(--ok); border-color: var(--ok); }
-  .btn-edit:hover { color: #3C3489; border-color: #3C3489; }
-  .btn-trash:hover { color: var(--urgent); border-color: var(--urgent); }
-  .btn-resp-yes { font-size: 12px; height: 28px; width: auto; padding: 0 10px; border-radius: 99px; gap: 4px; color: var(--ok); border-color: var(--ok); }
-  .btn-resp-yes:hover { background: var(--ok-bg); }
-  .btn-resp-no { font-size: 12px; height: 28px; width: auto; padding: 0 10px; border-radius: 99px; gap: 4px; color: var(--urgent); border-color: var(--urgent); }
-  .btn-resp-no:hover { background: var(--urgent-bg); }
-
-  /* Response action row */
   .card-action-row { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .card-action-label { font-size: 12px; color: var(--text2); }
   .card-action-btns { display: flex; gap: 6px; }
-
+  .card-actions { display: flex; gap: 5px; flex-shrink: 0; }
+  .btn-icon { width: 32px; height: 32px; border-radius: var(--radius); border: 0.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text2); transition: all 0.15s; }
+  .btn-icon:hover { background: var(--surface2); border-color: var(--border2); }
+  .btn-edit:hover{color:#3C3489;border-color:#3C3489} .btn-trash:hover{color:var(--urgent);border-color:var(--urgent)}
+  .btn-resp { font-size: 12px; height: 28px; width: auto; padding: 0 10px; border-radius: 99px; display: inline-flex; align-items: center; gap: 4px; border: 0.5px solid; background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-resp-yes{color:var(--ok);border-color:var(--ok)} .btn-resp-yes:hover{background:var(--ok-bg)}
+  .btn-resp-no{color:var(--urgent);border-color:var(--urgent)} .btn-resp-no:hover{background:var(--urgent-bg)}
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
   .empty i { font-size: 32px; display: block; margin-bottom: 10px; }
   .empty p { font-size: 14px; }
@@ -148,10 +140,20 @@
 </style>
 </head>
 <body>
+
 <header>
-  <h1>Seguimiento de clientes</h1>
-  <p>Solo los pendientes de respuesta. Cuando respondan, los marcas y desaparecen.</p>
+  <div>
+    <h1>Seguimiento de clientes</h1>
+    <p>Solo los pendientes de respuesta.</p>
+  </div>
+  <button class="btn-settings" onclick="openSettings()" title="Configuración de alertas"><i class="ti ti-settings" aria-hidden="true"></i></button>
 </header>
+
+<div class="notif-banner" id="notifBanner">
+  <i class="ti ti-bell-ringing" aria-hidden="true"></i>
+  <div id="notifBannerText"></div>
+</div>
+
 <div class="stats" id="stats"></div>
 <div class="toolbar">
   <div class="filters" id="filters">
@@ -161,15 +163,13 @@
     <button class="filter-btn" data-filter="soon">Próximos 3 días</button>
     <button class="filter-btn" data-filter="high">Alta prioridad</button>
   </div>
-  <button class="btn-new" onclick="openModal()">
-    <i class="ti ti-plus" aria-hidden="true"></i> Agregar cliente
-  </button>
+  <button class="btn-new" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar cliente</button>
 </div>
 <div id="list"></div>
 
-<!-- Main modal -->
-<div class="modal-overlay" id="overlay" onclick="handleOverlayClick(event)">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+<!-- Client modal -->
+<div class="modal-overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
     <h2 id="modal-title">Nuevo cliente</h2>
     <div class="field-row">
       <div class="field"><label>Nombre *</label><input id="fName" type="text" placeholder="Ej: María García" /></div>
@@ -184,15 +184,15 @@
       <div class="field"><label>Fase</label>
         <select id="fPhase">
           <option value="1">Fase 1 — Primer contacto</option>
-          <option value="2">Fase 2 — Seguimiento (3 días)</option>
-          <option value="3">Fase 3 — Mensaje de nutrición</option>
+          <option value="2">Fase 2 — Seguimiento</option>
+          <option value="3">Fase 3 — Nutrición</option>
         </select>
       </div>
       <div class="field"><label>Prioridad</label>
         <select id="fPriority"><option value="normal">Normal</option><option value="high">Alta</option></select>
       </div>
     </div>
-    <div class="field"><label>Notas</label><textarea id="fNote" placeholder="Detalles importantes de la conversación..."></textarea></div>
+    <div class="field"><label>Notas</label><textarea id="fNote" placeholder="Detalles importantes..."></textarea></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
       <button class="btn-save" onclick="saveClient()">Guardar</button>
@@ -200,14 +200,12 @@
   </div>
 </div>
 
-<!-- No-response modal -->
-<div class="modal-overlay" id="noRespOverlay" onclick="handleNoRespOverlayClick(event)">
-  <div class="modal" role="dialog" aria-modal="true">
-    <h2 id="noRespTitle">No respondió — avanzar fase</h2>
+<!-- No response modal -->
+<div class="modal-overlay" id="noRespOverlay" onclick="if(event.target===this)closeNoRespModal()">
+  <div class="modal">
+    <h2 id="noRespTitle">No respondió</h2>
     <div class="phase-info" id="noRespInfo"><i class="ti ti-info-circle" aria-hidden="true"></i><span></span></div>
-    <hr class="modal-divider" />
-    <div class="modal-section-title">Próximo recordatorio</div>
-    <div class="field"><label>Fecha sugerida (puedes cambiarla)</label><input id="noRespDate" type="date" /></div>
+    <div class="field"><label>Próximo recordatorio (editable)</label><input id="noRespDate" type="date" /></div>
     <div class="field"><label>Nota sobre este intento (opcional)</label><input id="noRespNote" type="text" placeholder="Ej: Dejé mensaje de voz" /></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeNoRespModal()">Cancelar</button>
@@ -216,21 +214,65 @@
   </div>
 </div>
 
+<!-- Settings modal -->
+<div class="modal-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="modal">
+    <h2>⚙️ Configuración de alertas</h2>
+
+    <div class="settings-section">
+      <h3><i class="ti ti-bell" aria-hidden="true"></i> Notificaciones del navegador</h3>
+      <div class="settings-row">
+        <label>Activar notificaciones al abrir la app</label>
+        <label class="toggle"><input type="checkbox" id="toggleBrowserNotif" onchange="saveBrowserNotifSetting()" /><span class="toggle-slider"></span></label>
+      </div>
+      <div id="notifPermStatus" style="font-size:12px;color:var(--text3);margin-top:4px;"></div>
+    </div>
+
+    <hr class="modal-divider" />
+
+    <div class="settings-section">
+      <h3><i class="ti ti-brand-slack" aria-hidden="true"></i> Slack</h3>
+      <div class="settings-row">
+        <label>Enviar resumen a Slack al abrir</label>
+        <label class="toggle"><input type="checkbox" id="toggleSlack" onchange="saveSlackSetting()" /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="field" style="margin-top:8px;">
+        <label>Webhook URL de Slack</label>
+        <input id="slackWebhook" type="text" placeholder="https://hooks.slack.com/services/..." oninput="saveSlackSetting()" />
+      </div>
+      <div class="slack-help">
+        Para obtener tu webhook: en Slack ve a <strong>Apps → Incoming Webhooks → Add to Slack</strong>, elige el canal y copia la URL.<br>
+        <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener">Ver guía completa →</a>
+      </div>
+      <div id="slackStatus"></div>
+      <div style="margin-top:10px;">
+        <button class="btn-test" onclick="testSlack()"><i class="ti ti-send" aria-hidden="true"></i> Enviar mensaje de prueba</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-save" onclick="closeSettings()">Listo</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const COLORS = ['av0','av1','av2','av3','av4'];
   const PHASES = {
-    1: { label: 'Fase 1 — Primer contacto', next: 2, days: 3 },
-    2: { label: 'Fase 2 — Seguimiento', next: 3, days: 2 },
-    3: { label: 'Fase 3 — Nutrición', next: null, days: null },
+    1: { label: 'Fase 1 — Primer contacto', icon: 'send', next: 2, days: 3 },
+    2: { label: 'Fase 2 — Seguimiento', icon: 'refresh', next: 3, days: 2 },
+    3: { label: 'Fase 3 — Nutrición', icon: 'heart', next: null, days: 7 },
   };
 
   let clients = JSON.parse(localStorage.getItem('sc_clients_v2') || '[]');
+  let settings = JSON.parse(localStorage.getItem('sc_settings') || '{}');
   let currentFilter = 'all';
   let editingId = null;
   let expandedNotes = new Set();
   let noRespClientId = null;
 
   function persist() { localStorage.setItem('sc_clients_v2', JSON.stringify(clients)); }
+  function persistSettings() { localStorage.setItem('sc_settings', JSON.stringify(settings)); }
   function todayStr() { return new Date().toISOString().split('T')[0]; }
 
   function addBusinessDays(fromStr, days) {
@@ -238,8 +280,7 @@
     let added = 0;
     while (added < days) {
       d.setDate(d.getDate() + 1);
-      const dow = d.getDay();
-      if (dow !== 0 && dow !== 6) added++;
+      if (d.getDay() !== 0 && d.getDay() !== 6) added++;
     }
     return d.toISOString().split('T')[0];
   }
@@ -259,7 +300,135 @@
     return 'normal';
   }
 
-  // Main modal
+  // ── Browser notifications ──
+  async function requestNotifPermission() {
+    if (!('Notification' in window)) return 'unsupported';
+    if (Notification.permission === 'granted') return 'granted';
+    if (Notification.permission === 'denied') return 'denied';
+    const result = await Notification.requestPermission();
+    return result;
+  }
+
+  function updateNotifPermStatus() {
+    const el = document.getElementById('notifPermStatus');
+    if (!('Notification' in window)) { el.textContent = 'Tu navegador no soporta notificaciones.'; return; }
+    const p = Notification.permission;
+    el.textContent = p === 'granted' ? '✓ Permiso concedido' : p === 'denied' ? '✗ Bloqueado — habilítalas en ajustes del navegador' : 'Pendiente de permiso';
+    el.style.color = p === 'granted' ? 'var(--ok)' : p === 'denied' ? 'var(--urgent)' : 'var(--text3)';
+  }
+
+  async function saveBrowserNotifSetting() {
+    const checked = document.getElementById('toggleBrowserNotif').checked;
+    if (checked) {
+      const perm = await requestNotifPermission();
+      if (perm !== 'granted') {
+        document.getElementById('toggleBrowserNotif').checked = false;
+        updateNotifPermStatus();
+        return;
+      }
+    }
+    settings.browserNotif = checked;
+    persistSettings();
+    updateNotifPermStatus();
+  }
+
+  function fireBrowserNotifications() {
+    if (!settings.browserNotif) return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    const urgent = clients.filter(c => getStatus(c) === 'urgent');
+    const today = clients.filter(c => getStatus(c) === 'today');
+    const all = [...urgent, ...today];
+    if (!all.length) return;
+    const body = all.slice(0,5).map(c => `• ${c.name} (${PHASES[c.phase||1].label})`).join('\n');
+    new Notification(`📋 Seguimiento: ${all.length} cliente${all.length!==1?'s':''} hoy`, {
+      body: body + (all.length > 5 ? `\n...y ${all.length-5} más` : ''),
+      icon: 'https://cdn.jsdelivr.net/npm/@tabler/icons/icons/users.svg'
+    });
+  }
+
+  // ── Slack ──
+  function saveSlackSetting() {
+    settings.slackEnabled = document.getElementById('toggleSlack').checked;
+    settings.slackWebhook = document.getElementById('slackWebhook').value.trim();
+    persistSettings();
+  }
+
+  async function sendSlackMessage(text) {
+    const webhook = settings.slackWebhook;
+    if (!webhook) return false;
+    try {
+      await fetch(webhook, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      return true;
+    } catch { return false; }
+  }
+
+  async function testSlack() {
+    const statusEl = document.getElementById('slackStatus');
+    const webhook = document.getElementById('slackWebhook').value.trim();
+    if (!webhook) { statusEl.className='slack-status err'; statusEl.textContent='Ingresa una Webhook URL primero.'; return; }
+    statusEl.className='slack-status'; statusEl.textContent='Enviando...';
+    saveSlackSetting();
+    const ok = await sendSlackMessage('✅ *Seguimiento de Clientes* conectado correctamente. Los recordatorios llegarán aquí cada vez que abras la app.');
+    statusEl.className = 'slack-status ' + (ok?'ok':'err');
+    statusEl.textContent = ok ? '✓ Mensaje enviado correctamente' : '✗ Error — revisa que la URL sea correcta';
+  }
+
+  async function fireSlackSummary() {
+    if (!settings.slackEnabled || !settings.slackWebhook) return;
+    const lastSent = settings.slackLastSent;
+    if (lastSent === todayStr()) return; // solo una vez al día
+    const urgent = clients.filter(c => getStatus(c) === 'urgent');
+    const today = clients.filter(c => getStatus(c) === 'today');
+    const soon = clients.filter(c => getStatus(c) === 'soon');
+    if (!urgent.length && !today.length && !soon.length) return;
+
+    let msg = `📋 *Seguimiento de Clientes — ${todayStr()}*\n`;
+    if (urgent.length) {
+      msg += `\n🔴 *Vencidos (${urgent.length}):*\n`;
+      urgent.forEach(c => msg += `• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);
+    }
+    if (today.length) {
+      msg += `\n🟡 *Recordar hoy (${today.length}):*\n`;
+      today.forEach(c => msg += `• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);
+    }
+    if (soon.length) {
+      msg += `\n🟢 *Próximos 3 días (${soon.length}):*\n`;
+      soon.forEach(c => msg += `• ${c.name}${c.company?' — '+c.company:''} · recordar ${c.remindDate}\n`);
+    }
+
+    const ok = await sendSlackMessage(msg);
+    if (ok) { settings.slackLastSent = todayStr(); persistSettings(); }
+  }
+
+  // ── In-app banner ──
+  function showBanner() {
+    const urgent = clients.filter(c => getStatus(c) === 'urgent');
+    const today = clients.filter(c => getStatus(c) === 'today');
+    const all = [...urgent, ...today];
+    const banner = document.getElementById('notifBanner');
+    const text = document.getElementById('notifBannerText');
+    if (!all.length) { banner.classList.remove('show'); return; }
+    const names = all.slice(0,3).map(c=>c.name).join(', ');
+    text.innerHTML = `<strong>${all.length} cliente${all.length!==1?'s':''} para hoy:</strong> ${names}${all.length>3?' y '+(all.length-3)+' más':''}`;
+    banner.classList.add('show');
+  }
+
+  // ── Settings modal ──
+  function openSettings() {
+    document.getElementById('toggleBrowserNotif').checked = !!settings.browserNotif;
+    document.getElementById('toggleSlack').checked = !!settings.slackEnabled;
+    document.getElementById('slackWebhook').value = settings.slackWebhook || '';
+    document.getElementById('slackStatus').textContent = '';
+    updateNotifPermStatus();
+    document.getElementById('settingsOverlay').classList.add('open');
+  }
+  function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
+
+  // ── Client modal ──
   function openModal(id = null) {
     editingId = id;
     document.getElementById('modal-title').textContent = id ? 'Editar cliente' : 'Nuevo cliente';
@@ -284,14 +453,12 @@
     setTimeout(() => document.getElementById('fName').focus(), 50);
   }
   function closeModal() { document.getElementById('overlay').classList.remove('open'); editingId = null; }
-  function handleOverlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
   function saveClient() {
     const name = document.getElementById('fName').value.trim();
     if (!name) { document.getElementById('fName').focus(); return; }
     const data = {
-      name,
-      company: document.getElementById('fCompany').value.trim(),
+      name, company: document.getElementById('fCompany').value.trim(),
       topic: document.getElementById('fTopic').value.trim(),
       talkDate: document.getElementById('fTalkDate').value || todayStr(),
       remindDate: document.getElementById('fRemind').value || '',
@@ -308,68 +475,41 @@
     persist(); closeModal(); render();
   }
 
-  // Responded — remove client
-  function markDone(id) {
-    const c = clients.find(x => x.id === id);
-    if (!c) return;
-    c.responses = c.responses || [];
-    c.responses.push({ date: todayStr(), responded: true, phase: c.phase, note: 'Respondió ✓' });
-    clients = clients.filter(x => x.id !== id);
-    persist(); render();
-  }
-
+  function markDone(id) { clients = clients.filter(c => c.id !== id); persist(); render(); }
   function del(id) { if (!confirm('¿Eliminar este cliente?')) return; clients = clients.filter(c => c.id !== id); persist(); render(); }
   function toggleNote(id) { expandedNotes.has(id) ? expandedNotes.delete(id) : expandedNotes.add(id); render(); }
 
-  // No response modal
+  // ── No response modal ──
   function openNoResp(id) {
     noRespClientId = id;
     const c = clients.find(x => x.id === id);
     const phase = c.phase || 1;
     const phaseData = PHASES[phase];
     const nextPhase = phaseData.next;
-
     document.getElementById('noRespTitle').textContent = nextPhase
-      ? `No respondió — pasar a ${PHASES[nextPhase].label}`
-      : 'No respondió — Fase 3 (última)';
-
+      ? `No respondió → ${PHASES[nextPhase].label}` : 'No respondió (Fase 3 final)';
     const infoSpan = document.querySelector('#noRespInfo span');
-    if (nextPhase) {
-      infoSpan.textContent = `Actualmente en ${phaseData.label}. Se avanzará a ${PHASES[nextPhase].label} y el recordatorio se calculará automáticamente en días hábiles.`;
-    } else {
-      infoSpan.textContent = `Ya estás en la Fase 3 (Nutrición). Se registrará el intento y puedes ajustar el próximo recordatorio.`;
-    }
-
-    const daysToAdd = nextPhase ? PHASES[nextPhase].days : 7;
-    document.getElementById('noRespDate').value = addBusinessDays(todayStr(), daysToAdd);
+    infoSpan.textContent = nextPhase
+      ? `Actualmente en ${phaseData.label}. Se pasará a ${PHASES[nextPhase].label}. La fecha se calculó saltando fines de semana — puedes editarla.`
+      : `Estás en la Fase 3. Se registra el intento y puedes ajustar el recordatorio.`;
+    document.getElementById('noRespDate').value = addBusinessDays(todayStr(), PHASES[nextPhase||3].days);
     document.getElementById('noRespNote').value = '';
     document.getElementById('noRespOverlay').classList.add('open');
   }
-
   function closeNoRespModal() { document.getElementById('noRespOverlay').classList.remove('open'); noRespClientId = null; }
-  function handleNoRespOverlayClick(e) { if (e.target === document.getElementById('noRespOverlay')) closeNoRespModal(); }
 
   function confirmNoResp() {
     const c = clients.find(x => x.id === noRespClientId);
     if (!c) return;
     const phase = c.phase || 1;
-    const phaseData = PHASES[phase];
     c.responses = c.responses || [];
-    c.responses.push({
-      date: todayStr(),
-      responded: false,
-      phase,
-      note: document.getElementById('noRespNote').value.trim() || 'Sin respuesta'
-    });
-    if (phaseData.next) c.phase = phaseData.next;
+    c.responses.push({ date: todayStr(), responded: false, phase, note: document.getElementById('noRespNote').value.trim() || 'Sin respuesta' });
+    if (PHASES[phase].next) c.phase = PHASES[phase].next;
     c.remindDate = document.getElementById('noRespDate').value;
     persist(); closeNoRespModal(); render();
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeModal(); closeNoRespModal(); }
-  });
-
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeNoRespModal(); closeSettings(); } });
   document.getElementById('filters').addEventListener('click', e => {
     const btn = e.target.closest('.filter-btn');
     if (!btn) return;
@@ -388,82 +528,63 @@
       <div class="stat"><div class="stat-label">Recordar hoy</div><div class="stat-val ${todayC>0?'amber':''}">${todayC}</div></div>
       <div class="stat"><div class="stat-label">Alta prioridad</div><div class="stat-val">${clients.filter(c=>c.priority==='high').length}</div></div>
     `;
-
     let filtered = clients;
-    if (currentFilter === 'urgent') filtered = clients.filter(c => getStatus(c) === 'urgent');
-    else if (currentFilter === 'today') filtered = clients.filter(c => getStatus(c) === 'today');
-    else if (currentFilter === 'soon') filtered = clients.filter(c => ['today','soon'].includes(getStatus(c)));
-    else if (currentFilter === 'high') filtered = clients.filter(c => c.priority === 'high');
+    if (currentFilter==='urgent') filtered=clients.filter(c=>getStatus(c)==='urgent');
+    else if (currentFilter==='today') filtered=clients.filter(c=>getStatus(c)==='today');
+    else if (currentFilter==='soon') filtered=clients.filter(c=>['today','soon'].includes(getStatus(c)));
+    else if (currentFilter==='high') filtered=clients.filter(c=>c.priority==='high');
 
-    const sorted = [...filtered].sort((a,b) => {
-      const s = {urgent:0,today:1,soon:2,future:3,normal:4};
-      const d = s[getStatus(a)] - s[getStatus(b)];
-      if (d !== 0) return d;
-      return a.priority==='high' && b.priority!=='high' ? -1 : 1;
+    const sorted = [...filtered].sort((a,b)=>{
+      const s={urgent:0,today:1,soon:2,future:3,normal:4};
+      const d=s[getStatus(a)]-s[getStatus(b)];
+      if(d!==0)return d;
+      return a.priority==='high'&&b.priority!=='high'?-1:1;
     });
 
     if (!sorted.length) {
-      document.getElementById('list').innerHTML = `<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentFilter==='all'?'Aún no hay clientes. Presiona "Agregar cliente" para empezar.':'No hay clientes en este filtro.'}</p></div>`;
+      document.getElementById('list').innerHTML=`<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentFilter==='all'?'Aún no hay clientes. Presiona "Agregar cliente" para empezar.':'No hay clientes en este filtro.'}</p></div>`;
       return;
     }
 
-    const groups = {urgent:[],today:[],soon:[],future:[],normal:[]};
-    sorted.forEach(c => groups[getStatus(c)].push(c));
-    const labels = {urgent:'Vencidos',today:'Recordar hoy',soon:'Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
+    const groups={urgent:[],today:[],soon:[],future:[],normal:[]};
+    sorted.forEach(c=>groups[getStatus(c)].push(c));
+    const labels={urgent:'Vencidos',today:'Recordar hoy',soon:'Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
 
-    let html = '';
-    for (const [key, label] of Object.entries(labels)) {
+    let html='';
+    for (const [key,label] of Object.entries(labels)) {
       if (!groups[key].length) continue;
-      html += `<div class="section-label">${label}</div>`;
-      html += groups[key].map(c => {
-        const status = getStatus(c);
-        const diff = daysDiff(c.remindDate);
-        let timeBadge = '';
-        if (status==='urgent') timeBadge = `<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
-        else if (status==='today') timeBadge = `<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
-        else if (status==='soon') timeBadge = `<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
-        else if (status==='future') timeBadge = `<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
-
-        const phase = c.phase || 1;
-        const phaseBadge = `<span class="phase-badge phase-${phase}"><i class="ti ti-${phase===1?'send':phase===2?'refresh':'heart'}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
-        const prioBadge = c.priority==='high' ? `<span class="badge badge-high">Alta prioridad</span>` : '';
-
-        const expanded = expandedNotes.has(c.id);
-        const noteHtml = c.note ? `<div class="card-note-wrap"><div class="card-note ${expanded?'':'collapsed'}">${c.note}</div><button class="note-toggle" onclick="toggleNote(${c.id})"><i class="ti ti-chevron-${expanded?'up':'down'}" aria-hidden="true"></i> ${expanded?'Ver menos':'Ver nota completa'}</button></div>` : '';
-
-        const responses = c.responses || [];
-        const respChips = responses.slice(-3).map(r =>
-          `<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`
-        ).join('');
-        const respLogHtml = responses.length ? `<div class="card-resp-log">${respChips}${responses.length>3?`<span class="resp-chip">+${responses.length-3} más</span>`:''}</div>` : '';
-
-        const nextPhaseInfo = PHASES[phase].next ? `Registrar intento y pasar a ${PHASES[PHASES[phase].next].label}` : 'Registrar intento (Fase 3 final)';
-
+      html+=`<div class="section-label">${label}</div>`;
+      html+=groups[key].map(c=>{
+        const status=getStatus(c), diff=daysDiff(c.remindDate);
+        let timeBadge='';
+        if(status==='urgent') timeBadge=`<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
+        else if(status==='today') timeBadge=`<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
+        else if(status==='soon') timeBadge=`<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
+        else if(status==='future') timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
+        const phase=c.phase||1;
+        const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
+        const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
+        const expanded=expandedNotes.has(c.id);
+        const noteHtml=c.note?`<div class="card-note-wrap"><div class="card-note ${expanded?'':'collapsed'}">${c.note}</div><button class="note-toggle" onclick="toggleNote(${c.id})"><i class="ti ti-chevron-${expanded?'up':'down'}" aria-hidden="true"></i> ${expanded?'Ver menos':'Ver nota completa'}</button></div>`:'';
+        const responses=c.responses||[];
+        const respChips=responses.slice(-3).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
+        const respLogHtml=responses.length?`<div class="card-resp-log">${respChips}${responses.length>3?`<span class="resp-chip">+${responses.length-3} más</span>`:''}</div>`:'';
         return `<div class="card ${status==='urgent'?'is-urgent':status==='today'?'is-today':''}">
           <div class="card-main">
             <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
             <div class="card-body">
-              <div class="card-top">
-                <span class="card-name">${c.name}</span>
-                ${c.company?`<span class="card-company">${c.company}</span>`:''}
-                ${phaseBadge}${timeBadge}${prioBadge}
-              </div>
+              <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${timeBadge}${prioBadge}</div>
               <div class="card-meta">
                 ${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}
                 ${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}
-                ${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> Recordar: ${c.remindDate}</span>`:''}
+                ${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}
               </div>
-              ${respLogHtml}
-              ${noteHtml}
+              ${respLogHtml}${noteHtml}
               <div class="card-action-row">
                 <span class="card-action-label">¿Qué pasó?</span>
                 <div class="card-action-btns">
-                  <button class="btn-icon btn-resp-yes" onclick="markDone(${c.id})" title="Respondió">
-                    <i class="ti ti-check" aria-hidden="true"></i> Respondió
-                  </button>
-                  <button class="btn-icon btn-resp-no" onclick="openNoResp(${c.id})" title="${nextPhaseInfo}">
-                    <i class="ti ti-x" aria-hidden="true"></i> No respondió
-                  </button>
+                  <button class="btn-resp btn-resp-yes" onclick="markDone(${c.id})"><i class="ti ti-check" aria-hidden="true"></i> Respondió</button>
+                  <button class="btn-resp btn-resp-no" onclick="openNoResp(${c.id})"><i class="ti ti-x" aria-hidden="true"></i> No respondió</button>
                 </div>
               </div>
             </div>
@@ -475,10 +596,14 @@
         </div>`;
       }).join('');
     }
-    document.getElementById('list').innerHTML = html;
+    document.getElementById('list').innerHTML=html;
+    showBanner();
   }
 
+  // Init
   render();
+  fireBrowserNotifications();
+  fireSlackSummary();
 </script>
 </body>
 </html>
