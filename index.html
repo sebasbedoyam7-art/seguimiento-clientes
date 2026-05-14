@@ -10,23 +10,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#F7F6F3;--surface:#FFFFFF;--surface2:#F0EEE9;
-    --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
-    --text:#1A1917;--text2:#6B6860;--text3:#9B9890;
-    --urgent:#C04A22;--urgent-bg:#FAECE7;
-    --today:#A06010;--today-bg:#FEF3DC;
-    --ok:#1A6645;--ok-bg:#E1F5EE;
-    --radius:10px;--radius-lg:14px;
-  }
-  @media(prefers-color-scheme:dark){:root{
-    --bg:#141412;--surface:#1F1E1B;--surface2:#2A2926;
-    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
-    --text:#F0EDE8;--text2:#9B9890;--text3:#6B6860;
-    --urgent:#F08060;--urgent-bg:rgba(200,80,40,0.15);
-    --today:#EFB040;--today-bg:rgba(200,140,30,0.15);
-    --ok:#40C080;--ok-bg:rgba(30,140,90,0.15);
-  }}
+  :root{--bg:#F7F6F3;--surface:#FFFFFF;--surface2:#F0EEE9;--border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);--text:#1A1917;--text2:#6B6860;--text3:#9B9890;--urgent:#C04A22;--urgent-bg:#FAECE7;--today:#A06010;--today-bg:#FEF3DC;--ok:#1A6645;--ok-bg:#E1F5EE;--radius:10px;--radius-lg:14px}
+  @media(prefers-color-scheme:dark){:root{--bg:#141412;--surface:#1F1E1B;--surface2:#2A2926;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--text:#F0EDE8;--text2:#9B9890;--text3:#6B6860;--urgent:#F08060;--urgent-bg:rgba(200,80,40,0.15);--today:#EFB040;--today-bg:rgba(200,140,30,0.15);--ok:#40C080;--ok-bg:rgba(30,140,90,0.15)}}
   html{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
   body{max-width:800px;margin:0 auto;padding:2rem 1.25rem 4rem}
   .header-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1.5rem}
@@ -44,6 +29,15 @@
   .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
   .stat-val{font-size:26px;font-weight:300;font-family:'DM Mono',monospace}
   .stat-val.red{color:var(--urgent)}.stat-val.amber{color:var(--today)}
+  /* Search */
+  .search-wrap{position:relative;margin-bottom:1rem}
+  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px;pointer-events:none}
+  .search-input{width:100%;height:38px;padding:0 36px 0 34px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color 0.15s}
+  .search-input:focus{border-color:var(--text2)}
+  .search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:99px;border:none;background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2)}
+  .search-clear:hover{background:var(--border2)}
+  .results-info{font-size:12px;color:var(--text3);margin-bottom:10px}
+  /* Toolbar */
   .toolbar{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center}
   .filters{display:flex;gap:6px;flex-wrap:wrap;flex:1}
   .filter-btn{height:30px;padding:0 12px;border:0.5px solid var(--border);border-radius:99px;background:transparent;cursor:pointer;font-size:12px;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all 0.15s}
@@ -51,10 +45,13 @@
   .filter-btn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
   .btn-new{height:34px;padding:0 16px;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;white-space:nowrap}
   .btn-new:hover{opacity:0.85}
+  /* Load more */
+  .load-more-btn{width:100%;height:38px;border:0.5px solid var(--border2);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:13px;color:var(--text2);font-family:'DM Sans',sans-serif;margin-top:10px;display:none;align-items:center;justify-content:center;gap:6px}
+  .load-more-btn:hover{background:var(--surface2)}
+  /* Banner */
   .notif-banner{background:var(--today-bg);border:0.5px solid #E8C060;border-radius:var(--radius);padding:10px 14px;margin-bottom:1rem;display:none;align-items:center;gap:10px;font-size:13px;color:var(--today)}
   .notif-banner.show{display:flex}
   .notif-banner i{font-size:18px;flex-shrink:0}
-
   /* Modals */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem}
   .modal-overlay.open{display:flex}
@@ -73,12 +70,11 @@
   .modal-divider{border:none;border-top:0.5px solid var(--border);margin:1rem 0}
   .phase-info{background:var(--surface2);border-radius:var(--radius);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--text2);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
   .phase-info i{font-size:16px;color:var(--text3);flex-shrink:0;margin-top:1px}
-
-  /* Comments modal */
+  /* Comments */
   .comments-modal{max-width:560px}
   .comments-client-name{font-size:13px;color:var(--text2);margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:0.5px solid var(--border)}
   .comments-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;max-height:340px;overflow-y:auto;padding-right:4px}
-  .comment-item{background:var(--surface2);border-radius:var(--radius);padding:10px 12px;position:relative}
+  .comment-item{background:var(--surface2);border-radius:var(--radius);padding:10px 12px}
   .comment-item.editing{border:0.5px solid var(--text2)}
   .comment-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
   .comment-date{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
@@ -94,9 +90,9 @@
   .comment-add-area{border-top:0.5px solid var(--border);padding-top:12px}
   .comment-add-area textarea{width:100%;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;resize:none;outline:none;height:72px;line-height:1.5}
   .comment-add-area textarea:focus{border-color:var(--text2)}
-  .comment-add-footer{display:flex;justify-content:flex-end;margin-top:8px}
+  .comment-add-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+  .comment-hint{font-size:11px;color:var(--text3)}
   .comments-empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:13px}
-
   /* Settings */
   .settings-section{margin-bottom:1.25rem}
   .settings-section h3{font-size:13px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
@@ -114,7 +110,6 @@
   .slack-help a{color:var(--text2)}
   .btn-test{height:30px;padding:0 12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);font-family:'DM Sans',sans-serif}
   .btn-test:hover{background:var(--surface2)}
-
   /* Cards */
   .section-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;margin-top:1.5rem}
   .card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:8px;transition:border-color 0.15s}
@@ -138,15 +133,12 @@
   .card-resp-log{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
   .resp-chip{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:99px;font-size:11px;background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)}
   .resp-chip.yes{background:var(--ok-bg);color:var(--ok);border-color:transparent}.resp-chip.no{background:var(--urgent-bg);color:var(--urgent);border-color:transparent}
-
-  /* Last comment preview in card */
   .card-last-comment{margin-top:6px;display:flex;align-items:flex-start;gap:6px;background:var(--surface2);border-radius:8px;padding:7px 10px}
   .card-last-comment-icon{color:var(--text3);font-size:13px;flex-shrink:0;margin-top:1px}
   .card-last-comment-text{font-size:12px;color:var(--text2);line-height:1.4;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .card-last-comment-date{font-size:11px;color:var(--text3);flex-shrink:0;font-family:'DM Mono',monospace}
+  .card-last-comment-date{font-size:11px;color:var(--text3);flex-shrink:0;font-family:'DM Mono',monospace;margin-left:6px}
   .btn-comments{display:inline-flex;align-items:center;gap:4px;margin-top:6px;background:none;border:0.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif}
   .btn-comments:hover{border-color:var(--border2);background:var(--surface2)}
-
   .card-action-row{margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
   .card-action-label{font-size:12px;color:var(--text2)}
   .card-action-btns{display:flex;gap:6px}
@@ -182,6 +174,13 @@
 <div id="tabActive">
   <div class="notif-banner" id="notifBanner"><i class="ti ti-bell-ringing" aria-hidden="true"></i><div id="notifBannerText"></div></div>
   <div class="stats" id="stats"></div>
+
+  <div class="search-wrap">
+    <i class="ti ti-search search-icon" aria-hidden="true"></i>
+    <input class="search-input" id="searchInput" type="text" placeholder="Buscar por nombre, empresa o tema..." oninput="onSearch()" />
+    <button class="search-clear" id="searchClear" onclick="clearSearch()" style="display:none" title="Limpiar"><i class="ti ti-x" aria-hidden="true"></i></button>
+  </div>
+
   <div class="toolbar">
     <div class="filters" id="filters">
       <button class="filter-btn active" data-filter="all">Todos</button>
@@ -192,7 +191,10 @@
     </div>
     <button class="btn-new" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar cliente</button>
   </div>
+
+  <div id="resultsInfo" class="results-info" style="display:none"></div>
   <div id="list"></div>
+  <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()"><i class="ti ti-chevron-down" aria-hidden="true"></i> <span id="loadMoreText">Cargar más</span></button>
 </div>
 
 <div id="tabHistory" style="display:none">
@@ -242,8 +244,9 @@
     <div class="comments-client-name" id="commentsClientName"></div>
     <div class="comments-list" id="commentsList"></div>
     <div class="comment-add-area">
-      <textarea id="newCommentText" placeholder="Escribe un comentario..."></textarea>
+      <textarea id="newCommentText" placeholder="Escribe un comentario... (Cmd+Enter para guardar)"></textarea>
       <div class="comment-add-footer">
+        <span class="comment-hint">Cmd+Enter para guardar</span>
         <button class="btn-save" onclick="addComment()" style="height:30px;font-size:12px;padding:0 14px"><i class="ti ti-send" aria-hidden="true"></i> Agregar</button>
       </div>
     </div>
@@ -276,6 +279,7 @@
 <script>
   const COLORS=['av0','av1','av2','av3','av4'];
   const PHASES={1:{label:'Fase 1 — Primer contacto',icon:'send',next:2,days:3},2:{label:'Fase 2 — Seguimiento',icon:'refresh',next:3,days:2},3:{label:'Fase 3 — Nutrición',icon:'heart',next:null,days:7}};
+  const PAGE_SIZE=20;
 
   function migrateData(){
     const old=localStorage.getItem('sc_clients'),v2=localStorage.getItem('sc_clients_v2');
@@ -288,7 +292,8 @@
   let clients=JSON.parse(localStorage.getItem('sc_clients_v3')||'null')||migrateData();
   let history=JSON.parse(localStorage.getItem('sc_history')||'[]');
   let settings=JSON.parse(localStorage.getItem('sc_settings')||'{}');
-  let currentFilter='all',currentTab='active',editingId=null,noRespClientId=null,commentsClientId=null,editingCommentId=null;
+  let currentFilter='all',currentTab='active',editingId=null,noRespClientId=null,commentsClientId=null,commentsInHistory=false;
+  let searchQuery='',visibleCount=PAGE_SIZE,sortedCache=[];
 
   function persist(){localStorage.setItem('sc_clients_v3',JSON.stringify(clients));localStorage.setItem('sc_history',JSON.stringify(history));}
   function persistSettings(){localStorage.setItem('sc_settings',JSON.stringify(settings));}
@@ -300,6 +305,7 @@
   function colorFor(n){let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
   function getStatus(c){const d=daysDiff(c.remindDate);if(c.remindDate&&d<0)return'urgent';if(c.remindDate&&d===0)return'today';if(c.remindDate&&d<=3)return'soon';if(c.remindDate)return'future';return'normal';}
 
+  // ── Tabs ──
   function switchTab(tab,btn){
     currentTab=tab;
     document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
@@ -309,34 +315,146 @@
     if(tab==='history')renderHistory();
   }
 
+  // ── Search ──
+  function onSearch(){
+    searchQuery=document.getElementById('searchInput').value.toLowerCase().trim();
+    document.getElementById('searchClear').style.display=searchQuery?'':'none';
+    visibleCount=PAGE_SIZE;
+    render();
+  }
+  function clearSearch(){
+    document.getElementById('searchInput').value='';
+    searchQuery='';
+    document.getElementById('searchClear').style.display='none';
+    visibleCount=PAGE_SIZE;
+    render();
+  }
+
+  // ── Pagination ──
+  function loadMore(){
+    visibleCount+=PAGE_SIZE;
+    renderCards();
+  }
+
+  // ── Build sorted+filtered list ──
+  function buildSortedList(){
+    let base=clients;
+    if(currentFilter==='urgent')base=clients.filter(c=>getStatus(c)==='urgent');
+    else if(currentFilter==='today')base=clients.filter(c=>getStatus(c)==='today');
+    else if(currentFilter==='soon')base=clients.filter(c=>['today','soon'].includes(getStatus(c)));
+    else if(currentFilter==='high')base=clients.filter(c=>c.priority==='high');
+    if(searchQuery){
+      base=base.filter(c=>(c.name+' '+(c.company||'')+' '+(c.topic||'')+' '+((c.comments||[]).map(x=>x.text).join(' '))).toLowerCase().includes(searchQuery));
+    }
+    // Sort: urgent first, today, soon, future, normal — then high priority within each group
+    const order={urgent:0,today:1,soon:2,future:3,normal:4};
+    sortedCache=[...base].sort((a,b)=>{
+      const d=order[getStatus(a)]-order[getStatus(b)];
+      if(d!==0)return d;
+      return a.priority==='high'&&b.priority!=='high'?-1:1;
+    });
+  }
+
+  // ── Render cards (pagination) ──
+  function renderCards(){
+    const toShow=sortedCache.slice(0,visibleCount);
+    const remaining=sortedCache.length-visibleCount;
+    const loadBtn=document.getElementById('loadMoreBtn');
+    const info=document.getElementById('resultsInfo');
+
+    if(remaining>0){
+      loadBtn.style.display='flex';
+      document.getElementById('loadMoreText').textContent=`Cargar más (${remaining} restante${remaining!==1?'s':''})`;
+    } else {
+      loadBtn.style.display='none';
+    }
+
+    if(searchQuery){
+      info.style.display='';
+      info.textContent=sortedCache.length?`${sortedCache.length} resultado${sortedCache.length!==1?'s':''} para "${searchQuery}"`:'Sin resultados';
+    } else {
+      info.style.display='none';
+    }
+
+    if(!sortedCache.length){
+      document.getElementById('list').innerHTML=`<div class="empty"><i class="ti ti-${searchQuery?'search':'check'}" aria-hidden="true"></i><p>${searchQuery?'Sin resultados para "'+searchQuery+'".':(currentFilter==='all'?'Aún no hay clientes activos.':'No hay clientes en este filtro.')}</p></div>`;
+      return;
+    }
+
+    // Group by status (preserving priority order within group)
+    const groups={urgent:[],today:[],soon:[],future:[],normal:[]};
+    toShow.forEach(c=>groups[getStatus(c)].push(c));
+    const labels={urgent:'🔴 Vencidos',today:'🟡 Recordar hoy',soon:'🟢 Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
+
+    let html='';
+    for(const [key,label] of Object.entries(labels)){
+      if(!groups[key].length)continue;
+      html+=`<div class="section-label">${label}</div>`;
+      html+=groups[key].map(c=>buildCard(c)).join('');
+    }
+    document.getElementById('list').innerHTML=html;
+  }
+
+  function buildCard(c){
+    const status=getStatus(c),diff=daysDiff(c.remindDate);
+    let timeBadge='';
+    if(status==='urgent')timeBadge=`<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
+    else if(status==='today')timeBadge=`<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
+    else if(status==='soon')timeBadge=`<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
+    else if(status==='future')timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
+    const phase=c.phase||1;
+    const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
+    const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
+    const responses=c.responses||[],comments=c.comments||[];
+    const respChips=responses.slice(-3).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
+    const lastComment=comments.length?comments[comments.length-1]:null;
+    return `<div class="card ${status==='urgent'?'is-urgent':status==='today'?'is-today':''}">
+      <div class="card-main">
+        <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
+        <div class="card-body">
+          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${timeBadge}${prioBadge}</div>
+          <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
+          ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
+          ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
+          <button class="btn-comments" onclick="openComments(${c.id},false)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
+          <div class="card-action-row">
+            <span class="card-action-label">¿Qué pasó?</span>
+            <div class="card-action-btns">
+              <button class="btn-resp btn-resp-yes" onclick="markDone(${c.id})"><i class="ti ti-check" aria-hidden="true"></i> Respondió</button>
+              <button class="btn-resp btn-resp-no" onclick="openNoResp(${c.id})"><i class="ti ti-x" aria-hidden="true"></i> No respondió</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn-icon btn-edit" onclick="openModal(${c.id})" title="Editar"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+          <button class="btn-icon btn-trash" onclick="del(${c.id})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }
+
   // ── Comments ──
-  function openComments(clientId, inHistory=false){
-    commentsClientId=clientId;
+  function openComments(clientId,inHistory){
+    commentsClientId=clientId;commentsInHistory=inHistory;
     const c=inHistory?history.find(x=>x.id===clientId):clients.find(x=>x.id===clientId);
     if(!c)return;
     document.getElementById('commentsClientName').textContent=c.name+(c.company?' — '+c.company:'');
     document.getElementById('newCommentText').value='';
-    editingCommentId=null;
     renderComments(c);
     document.getElementById('commentsOverlay').classList.add('open');
     setTimeout(()=>document.getElementById('newCommentText').focus(),50);
   }
   function closeComments(){document.getElementById('commentsOverlay').classList.remove('open');commentsClientId=null;}
-
-  function getCommentsClient(){
-    let c=clients.find(x=>x.id===commentsClientId);
-    if(!c)c=history.find(x=>x.id===commentsClientId);
-    return c;
-  }
+  function getCommentsClient(){return commentsInHistory?history.find(x=>x.id===commentsClientId):clients.find(x=>x.id===commentsClientId);}
 
   function renderComments(c){
     const comments=c.comments||[];
     const list=document.getElementById('commentsList');
-    if(!comments.length){list.innerHTML=`<div class="comments-empty"><i class="ti ti-message-off" style="font-size:24px;display:block;margin-bottom:6px;color:var(--text3)" aria-hidden="true"></i>Aún no hay comentarios. ¡Agrega el primero!</div>`;return;}
+    if(!comments.length){list.innerHTML=`<div class="comments-empty"><i class="ti ti-message-off" style="font-size:24px;display:block;margin-bottom:6px;color:var(--text3)" aria-hidden="true"></i>Aún no hay comentarios.</div>`;return;}
     list.innerHTML=comments.map(cm=>`
       <div class="comment-item" id="cmitem-${cm.id}">
         <div class="comment-meta">
-          <span class="comment-date">${cm.date}</span>
+          <span class="comment-date">${cm.date}${cm.edited?' · editado':''}</span>
           <div class="comment-actions">
             <button class="btn-comment-action" onclick="startEditComment('${cm.id}')" title="Editar"><i class="ti ti-pencil" aria-hidden="true"></i></button>
             <button class="btn-comment-action del" onclick="deleteComment('${cm.id}')" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
@@ -348,81 +466,52 @@
   }
 
   function addComment(){
-    const text=document.getElementById('newCommentText').value.trim();
-    if(!text)return;
+    const text=document.getElementById('newCommentText').value.trim();if(!text)return;
     const c=getCommentsClient();if(!c)return;
     c.comments=c.comments||[];
     c.comments.push({id:Date.now().toString(),date:nowStr(),text});
-    persist();
-    document.getElementById('newCommentText').value='';
-    renderComments(c);render();
-    if(currentTab==='history')renderHistory();
+    persist();document.getElementById('newCommentText').value='';
+    renderComments(c);render();if(currentTab==='history')renderHistory();
   }
 
   function startEditComment(cmId){
     const c=getCommentsClient();if(!c)return;
     const cm=(c.comments||[]).find(x=>x.id===cmId);if(!cm)return;
-    editingCommentId=cmId;
-    const item=document.getElementById('cmitem-'+cmId);
-    const textEl=document.getElementById('cmtext-'+cmId);
-    textEl.style.display='none';
-    item.classList.add('editing');
-    const existing=item.querySelector('.comment-edit-area');
-    if(!existing){
-      const editDiv=document.createElement('div');
-      editDiv.innerHTML=`<textarea class="comment-edit-area" id="cmedit-${cmId}">${cm.text}</textarea><div class="comment-edit-actions"><button class="btn-sm" onclick="cancelEditComment('${cmId}')">Cancelar</button><button class="btn-sm primary" onclick="saveEditComment('${cmId}')">Guardar</button></div>`;
-      item.appendChild(editDiv);
+    const item=document.getElementById('cmitem-'+cmId),textEl=document.getElementById('cmtext-'+cmId);
+    textEl.style.display='none';item.classList.add('editing');
+    if(!item.querySelector('.comment-edit-area')){
+      const div=document.createElement('div');
+      div.innerHTML=`<textarea class="comment-edit-area" id="cmedit-${cmId}">${cm.text}</textarea><div class="comment-edit-actions"><button class="btn-sm" onclick="cancelEditComment('${cmId}')">Cancelar</button><button class="btn-sm primary" onclick="saveEditComment('${cmId}')">Guardar</button></div>`;
+      item.appendChild(div);
       setTimeout(()=>{const ta=document.getElementById('cmedit-'+cmId);if(ta){ta.focus();ta.selectionStart=ta.value.length;}},50);
     }
   }
-
-  function cancelEditComment(cmId){
-    const item=document.getElementById('cmitem-'+cmId);
-    const textEl=document.getElementById('cmtext-'+cmId);
-    item.classList.remove('editing');
-    textEl.style.display='';
-    const editDiv=item.querySelector('.comment-edit-area')?.parentElement;
-    if(editDiv)editDiv.remove();
-    editingCommentId=null;
-  }
-
+  function cancelEditComment(cmId){const item=document.getElementById('cmitem-'+cmId),textEl=document.getElementById('cmtext-'+cmId);item.classList.remove('editing');textEl.style.display='';item.querySelector('.comment-edit-area')?.parentElement?.remove();}
   function saveEditComment(cmId){
-    const ta=document.getElementById('cmedit-'+cmId);
-    if(!ta)return;
-    const newText=ta.value.trim();
-    if(!newText)return;
+    const ta=document.getElementById('cmedit-'+cmId);if(!ta)return;
+    const newText=ta.value.trim();if(!newText)return;
     const c=getCommentsClient();if(!c)return;
-    const cm=(c.comments||[]).find(x=>x.id===cmId);
-    if(cm){cm.text=newText;cm.edited=nowStr();}
-    persist();renderComments(c);render();
-    if(currentTab==='history')renderHistory();
+    const cm=(c.comments||[]).find(x=>x.id===cmId);if(cm){cm.text=newText;cm.edited=true;}
+    persist();renderComments(c);render();if(currentTab==='history')renderHistory();
   }
-
   function deleteComment(cmId){
     if(!confirm('¿Eliminar este comentario?'))return;
     const c=getCommentsClient();if(!c)return;
     c.comments=(c.comments||[]).filter(x=>x.id!==cmId);
-    persist();renderComments(c);render();
-    if(currentTab==='history')renderHistory();
+    persist();renderComments(c);render();if(currentTab==='history')renderHistory();
   }
-
-  // Ctrl+Enter to add comment
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&document.getElementById('commentsOverlay').classList.contains('open')){addComment();}
-    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();}
-  });
 
   // ── Notifications ──
   async function requestNotifPermission(){if(!('Notification'in window))return'unsupported';if(Notification.permission==='granted')return'granted';if(Notification.permission==='denied')return'denied';return await Notification.requestPermission();}
   function updateNotifPermStatus(){const el=document.getElementById('notifPermStatus');if(!('Notification'in window)){el.textContent='Tu navegador no soporta notificaciones.';return;}const p=Notification.permission;el.textContent=p==='granted'?'✓ Permiso concedido':p==='denied'?'✗ Bloqueado — habilítalas en ajustes del navegador':'Pendiente de permiso';el.style.color=p==='granted'?'var(--ok)':p==='denied'?'var(--urgent)':'var(--text3)';}
   async function saveBrowserNotifSetting(){const checked=document.getElementById('toggleBrowserNotif').checked;if(checked){const perm=await requestNotifPermission();if(perm!=='granted'){document.getElementById('toggleBrowserNotif').checked=false;updateNotifPermStatus();return;}}settings.browserNotif=checked;persistSettings();updateNotifPermStatus();}
-  function fireBrowserNotifications(){if(!settings.browserNotif)return;if(!('Notification'in window)||Notification.permission!=='granted')return;const all=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];if(!all.length)return;new Notification(`📋 Seguimiento: ${all.length} cliente${all.length!==1?'s':''} hoy`,{body:all.slice(0,5).map(c=>`• ${c.name} (${PHASES[c.phase||1].label})`).join('\n')});}
+  function fireBrowserNotifications(){if(!settings.browserNotif||!('Notification'in window)||Notification.permission!=='granted')return;const all=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];if(!all.length)return;new Notification(`📋 Seguimiento: ${all.length} cliente${all.length!==1?'s':''} hoy`,{body:all.slice(0,5).map(c=>`• ${c.name} (${PHASES[c.phase||1].label})`).join('\n')});}
 
   // ── Slack ──
   function saveSlackSetting(){settings.slackEnabled=document.getElementById('toggleSlack').checked;settings.slackWebhook=document.getElementById('slackWebhook').value.trim();persistSettings();}
   async function sendSlackMessage(text){try{await fetch(settings.slackWebhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});return true;}catch{return false;}}
   async function testSlack(){const s=document.getElementById('slackStatus');if(!document.getElementById('slackWebhook').value.trim()){s.className='slack-status err';s.textContent='Ingresa una Webhook URL primero.';return;}s.className='slack-status';s.textContent='Enviando...';saveSlackSetting();const ok=await sendSlackMessage('✅ *Seguimiento de Clientes* conectado correctamente.');s.className='slack-status '+(ok?'ok':'err');s.textContent=ok?'✓ Mensaje enviado':'✗ Error — revisa la URL';}
-  async function fireSlackSummary(){if(!settings.slackEnabled||!settings.slackWebhook)return;if(settings.slackLastSent===todayStr())return;const urgent=clients.filter(c=>getStatus(c)==='urgent'),tod=clients.filter(c=>getStatus(c)==='today'),soon=clients.filter(c=>getStatus(c)==='soon');if(!urgent.length&&!tod.length&&!soon.length)return;let msg=`📋 *Seguimiento de Clientes — ${todayStr()}*\n`;if(urgent.length){msg+=`\n🔴 *Vencidos:*\n`;urgent.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);}if(tod.length){msg+=`\n🟡 *Hoy:*\n`;tod.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);}if(soon.length){msg+=`\n🟢 *Próximos 3 días:*\n`;soon.forEach(c=>msg+=`• ${c.name} · ${c.remindDate}\n`);}const ok=await sendSlackMessage(msg);if(ok){settings.slackLastSent=todayStr();persistSettings();}}
+  async function fireSlackSummary(){if(!settings.slackEnabled||!settings.slackWebhook||settings.slackLastSent===todayStr())return;const urgent=clients.filter(c=>getStatus(c)==='urgent'),tod=clients.filter(c=>getStatus(c)==='today'),soon=clients.filter(c=>getStatus(c)==='soon');if(!urgent.length&&!tod.length&&!soon.length)return;let msg=`📋 *Seguimiento de Clientes — ${todayStr()}*\n`;if(urgent.length){msg+=`\n🔴 *Vencidos:*\n`;urgent.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);}if(tod.length){msg+=`\n🟡 *Hoy:*\n`;tod.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);}if(soon.length){msg+=`\n🟢 *Próximos 3 días:*\n`;soon.forEach(c=>msg+=`• ${c.name} · ${c.remindDate}\n`);}const ok=await sendSlackMessage(msg);if(ok){settings.slackLastSent=todayStr();persistSettings();}}
 
   function showBanner(){const all=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];const banner=document.getElementById('notifBanner');if(!all.length){banner.classList.remove('show');return;}document.getElementById('notifBannerText').innerHTML=`<strong>${all.length} cliente${all.length!==1?'s':''} para hoy:</strong> ${all.slice(0,3).map(c=>c.name).join(', ')}${all.length>3?' y '+(all.length-3)+' más':''}`;banner.classList.add('show');}
 
@@ -430,12 +519,10 @@
   function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
 
   function openModal(id=null){
-    editingId=id;
-    document.getElementById('modal-title').textContent=id?'Editar cliente':'Nuevo cliente';
+    editingId=id;document.getElementById('modal-title').textContent=id?'Editar cliente':'Nuevo cliente';
     if(id){const c=clients.find(x=>x.id===id);document.getElementById('fName').value=c.name;document.getElementById('fCompany').value=c.company||'';document.getElementById('fTopic').value=c.topic||'';document.getElementById('fTalkDate').value=c.talkDate||'';document.getElementById('fRemind').value=c.remindDate||'';document.getElementById('fPhase').value=c.phase||'1';document.getElementById('fPriority').value=c.priority||'normal';document.getElementById('fNote').value='';}
     else{['fName','fCompany','fTopic','fNote'].forEach(i=>document.getElementById(i).value='');document.getElementById('fTalkDate').value=todayStr();document.getElementById('fRemind').value=addBusinessDays(todayStr(),3);document.getElementById('fPhase').value='1';document.getElementById('fPriority').value='normal';}
-    document.getElementById('overlay').classList.add('open');
-    setTimeout(()=>document.getElementById('fName').focus(),50);
+    document.getElementById('overlay').classList.add('open');setTimeout(()=>document.getElementById('fName').focus(),50);
   }
   function closeModal(){document.getElementById('overlay').classList.remove('open');editingId=null;}
 
@@ -444,25 +531,12 @@
     const noteVal=document.getElementById('fNote').value.trim();
     const data={name,company:document.getElementById('fCompany').value.trim(),topic:document.getElementById('fTopic').value.trim(),talkDate:document.getElementById('fTalkDate').value||todayStr(),remindDate:document.getElementById('fRemind').value||'',phase:parseInt(document.getElementById('fPhase').value),priority:document.getElementById('fPriority').value};
     if(editingId){const idx=clients.findIndex(c=>c.id===editingId);if(idx!==-1)clients[idx]={...clients[idx],...data};}
-    else{const newClient={id:Date.now(),responses:[],comments:[],...data};if(noteVal)newClient.comments.push({id:Date.now().toString(),date:nowStr(),text:noteVal});clients.push(newClient);}
+    else{const nc={id:Date.now(),responses:[],comments:[],...data};if(noteVal)nc.comments.push({id:Date.now().toString(),date:nowStr(),text:noteVal});clients.push(nc);}
     persist();closeModal();render();
   }
 
-  function markDone(id){
-    const c=clients.find(x=>x.id===id);if(!c)return;
-    history.unshift({...c,respondedAt:todayStr(),respondedPhase:c.phase});
-    clients=clients.filter(x=>x.id!==id);
-    persist();render();if(currentTab==='history')renderHistory();
-  }
-
-  function reactivate(idx){
-    const c={...history[idx]};delete c.respondedAt;delete c.respondedPhase;
-    c.id=Date.now();c.responses=c.responses||[];c.comments=c.comments||[];
-    c.remindDate=addBusinessDays(todayStr(),3);
-    clients.push(c);history.splice(idx,1);
-    persist();render();if(currentTab==='history')renderHistory();
-  }
-
+  function markDone(id){const c=clients.find(x=>x.id===id);if(!c)return;history.unshift({...c,respondedAt:todayStr(),respondedPhase:c.phase});clients=clients.filter(x=>x.id!==id);persist();render();if(currentTab==='history')renderHistory();}
+  function reactivate(idx){const c={...history[idx]};delete c.respondedAt;delete c.respondedPhase;c.id=Date.now();c.responses=c.responses||[];c.comments=c.comments||[];c.remindDate=addBusinessDays(todayStr(),3);clients.push(c);history.splice(idx,1);persist();render();if(currentTab==='history')renderHistory();}
   function del(id){if(!confirm('¿Eliminar este cliente?'))return;clients=clients.filter(c=>c.id!==id);persist();render();}
   function delHistory(idx){if(!confirm('¿Eliminar del historial?'))return;history.splice(idx,1);persist();renderHistory();}
 
@@ -478,17 +552,21 @@
   function confirmNoResp(){
     const c=clients.find(x=>x.id===noRespClientId);if(!c)return;
     const phase=c.phase||1,note=document.getElementById('noRespNote').value.trim();
-    c.responses=c.responses||[];
-    c.responses.push({date:todayStr(),responded:false,phase,note:note||'Sin respuesta'});
+    c.responses=c.responses||[];c.responses.push({date:todayStr(),responded:false,phase,note:note||'Sin respuesta'});
     if(note){c.comments=c.comments||[];c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Fase ${phase}] ${note}`});}
     if(PHASES[phase].next)c.phase=PHASES[phase].next;
     c.remindDate=document.getElementById('noRespDate').value;
     persist();closeNoRespModal();render();
   }
 
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&document.getElementById('commentsOverlay').classList.contains('open'))addComment();
+    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();}
+  });
+
   document.getElementById('filters').addEventListener('click',e=>{
     const btn=e.target.closest('.filter-btn');if(!btn)return;
-    currentFilter=btn.dataset.filter;
+    currentFilter=btn.dataset.filter;visibleCount=PAGE_SIZE;
     document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');render();
   });
@@ -498,10 +576,8 @@
     let items=history;if(q)items=history.filter(c=>(c.name+' '+(c.company||'')+' '+(c.topic||'')).toLowerCase().includes(q));
     document.getElementById('countHistory').textContent=history.length;
     if(!items.length){document.getElementById('histList').innerHTML=`<div class="empty"><i class="ti ti-history" aria-hidden="true"></i><p>${q?'Sin resultados.':'Aún no hay clientes en el historial.'}</p></div>`;return;}
-    document.getElementById('histList').innerHTML=items.map((c,i)=>{
-      const phase=c.respondedPhase||c.phase||1;
-      const responses=c.responses||[];
-      const comments=c.comments||[];
+    document.getElementById('histList').innerHTML=items.map((c)=>{
+      const phase=c.respondedPhase||c.phase||1,responses=c.responses||[],comments=c.comments||[];
       const respChips=responses.slice(-3).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
       const lastComment=comments.length?comments[comments.length-1]:null;
       const realIdx=history.indexOf(c);
@@ -529,60 +605,8 @@
     document.getElementById('countActive').textContent=clients.length;
     document.getElementById('countHistory').textContent=history.length;
     document.getElementById('stats').innerHTML=`<div class="stat"><div class="stat-label">Total activos</div><div class="stat-val">${clients.length}</div></div><div class="stat"><div class="stat-label">Vencidos</div><div class="stat-val ${urgent>0?'red':''}">${urgent}</div></div><div class="stat"><div class="stat-label">Hoy</div><div class="stat-val ${todayC>0?'amber':''}">${todayC}</div></div><div class="stat"><div class="stat-label">Historial</div><div class="stat-val">${history.length}</div></div>`;
-    let filtered=clients;
-    if(currentFilter==='urgent')filtered=clients.filter(c=>getStatus(c)==='urgent');
-    else if(currentFilter==='today')filtered=clients.filter(c=>getStatus(c)==='today');
-    else if(currentFilter==='soon')filtered=clients.filter(c=>['today','soon'].includes(getStatus(c)));
-    else if(currentFilter==='high')filtered=clients.filter(c=>c.priority==='high');
-    const sorted=[...filtered].sort((a,b)=>{const s={urgent:0,today:1,soon:2,future:3,normal:4};const d=s[getStatus(a)]-s[getStatus(b)];if(d!==0)return d;return a.priority==='high'&&b.priority!=='high'?-1:1;});
-    if(!sorted.length){document.getElementById('list').innerHTML=`<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentFilter==='all'?'Aún no hay clientes activos.':'No hay clientes en este filtro.'}</p></div>`;showBanner();return;}
-    const groups={urgent:[],today:[],soon:[],future:[],normal:[]};
-    sorted.forEach(c=>groups[getStatus(c)].push(c));
-    const labels={urgent:'Vencidos',today:'Recordar hoy',soon:'Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
-    let html='';
-    for(const [key,label] of Object.entries(labels)){
-      if(!groups[key].length)continue;
-      html+=`<div class="section-label">${label}</div>`;
-      html+=groups[key].map(c=>{
-        const status=getStatus(c),diff=daysDiff(c.remindDate);
-        let timeBadge='';
-        if(status==='urgent')timeBadge=`<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
-        else if(status==='today')timeBadge=`<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
-        else if(status==='soon')timeBadge=`<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
-        else if(status==='future')timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
-        const phase=c.phase||1;
-        const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
-        const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
-        const responses=c.responses||[];
-        const comments=c.comments||[];
-        const respChips=responses.slice(-3).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
-        const lastComment=comments.length?comments[comments.length-1]:null;
-        return `<div class="card ${status==='urgent'?'is-urgent':status==='today'?'is-today':''}">
-          <div class="card-main">
-            <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
-            <div class="card-body">
-              <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${timeBadge}${prioBadge}</div>
-              <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
-              ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
-              ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
-              <button class="btn-comments" onclick="openComments(${c.id})"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
-              <div class="card-action-row">
-                <span class="card-action-label">¿Qué pasó?</span>
-                <div class="card-action-btns">
-                  <button class="btn-resp btn-resp-yes" onclick="markDone(${c.id})"><i class="ti ti-check" aria-hidden="true"></i> Respondió</button>
-                  <button class="btn-resp btn-resp-no" onclick="openNoResp(${c.id})"><i class="ti ti-x" aria-hidden="true"></i> No respondió</button>
-                </div>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="btn-icon btn-edit" onclick="openModal(${c.id})" title="Editar"><i class="ti ti-pencil" aria-hidden="true"></i></button>
-              <button class="btn-icon btn-trash" onclick="del(${c.id})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
-            </div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-    document.getElementById('list').innerHTML=html;
+    buildSortedList();
+    renderCards();
     showBanner();
   }
 
