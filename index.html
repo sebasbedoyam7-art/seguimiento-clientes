@@ -31,17 +31,30 @@
   }
   html { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
   body { max-width: 800px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-  header { margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-  header h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
-  header p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  /* Header */
+  .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 1.5rem; }
+  .header-row h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+  .header-row p { font-size: 13px; color: var(--text2); margin-top: 4px; }
   .btn-settings { width: 34px; height: 34px; border-radius: var(--radius); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); font-size: 17px; flex-shrink: 0; margin-top: 2px; }
   .btn-settings:hover { background: var(--surface2); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 2px; background: var(--surface2); border-radius: var(--radius); padding: 3px; margin-bottom: 1.5rem; width: fit-content; }
+  .tab { height: 32px; padding: 0 16px; border: none; border-radius: 8px; background: transparent; cursor: pointer; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text2); display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+  .tab.active { background: var(--surface); color: var(--text); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .tab-count { background: var(--surface2); border-radius: 99px; padding: 1px 7px; font-size: 11px; font-family: 'DM Mono', monospace; }
+  .tab.active .tab-count { background: var(--bg); }
+
+  /* Stats */
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 1.75rem; }
   .stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
   .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
   .stat-val { font-size: 26px; font-weight: 300; font-family: 'DM Mono', monospace; }
   .stat-val.red { color: var(--urgent); }
   .stat-val.amber { color: var(--today); }
+
+  /* Toolbar */
   .toolbar { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
   .filters { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
   .filter-btn { height: 30px; padding: 0 12px; border: 0.5px solid var(--border); border-radius: 99px; background: transparent; cursor: pointer; font-size: 12px; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
@@ -50,11 +63,10 @@
   .btn-new { height: 34px; padding: 0 16px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
   .btn-new:hover { opacity: 0.85; }
 
-  /* Notification banner */
+  /* Banner */
   .notif-banner { background: var(--today-bg); border: 0.5px solid #E8C060; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 1rem; display: none; align-items: center; gap: 10px; font-size: 13px; color: var(--today); }
   .notif-banner.show { display: flex; }
   .notif-banner i { font-size: 18px; flex-shrink: 0; }
-  .notif-banner strong { font-weight: 500; }
 
   /* Modals */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem; }
@@ -72,11 +84,10 @@
   .btn-cancel { height: 34px; padding: 0 14px; background: transparent; border: 0.5px solid var(--border2); border-radius: var(--radius); cursor: pointer; font-size: 13px; color: var(--text2); font-family: 'DM Sans', sans-serif; }
   .btn-save { height: 34px; padding: 0 18px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; }
   .modal-divider { border: none; border-top: 0.5px solid var(--border); margin: 1rem 0; }
-  .modal-section-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
   .phase-info { background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text2); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
   .phase-info i { font-size: 16px; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
 
-  /* Settings modal */
+  /* Settings */
   .settings-section { margin-bottom: 1.25rem; }
   .settings-section h3 { font-size: 13px; font-weight: 500; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
   .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
@@ -101,6 +112,7 @@
   .card:hover { border-color: var(--border2); }
   .card.is-urgent { border-left: 2.5px solid var(--urgent); }
   .card.is-today { border-left: 2.5px solid var(--today); }
+  .card.is-done { border-left: 2.5px solid var(--ok); opacity: 0.85; }
   .card-main { display: flex; align-items: flex-start; gap: 12px; }
   .avatar { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; margin-top: 1px; }
   .av0{background:#E6F1FB;color:#0C447C} .av1{background:#E1F5EE;color:#085041} .av2{background:#EEEDFE;color:#3C3489} .av3{background:#FAECE7;color:#712B13} .av4{background:#FAEEDA;color:#633806}
@@ -111,6 +123,7 @@
   .badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 500; }
   .badge-urgent{background:var(--urgent-bg);color:var(--urgent)} .badge-today{background:var(--today-bg);color:var(--today)} .badge-soon{background:var(--ok-bg);color:var(--ok)}
   .badge-high{background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
+  .badge-done{background:var(--ok-bg);color:var(--ok)}
   .card-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--text2); margin-top: 4px; align-items: center; }
   .card-meta span { display: flex; align-items: center; gap: 4px; }
   .topic-pill { background: var(--surface2); border-radius: 99px; padding: 1px 8px; font-size: 11px; color: var(--text2); }
@@ -133,6 +146,13 @@
   .btn-resp { font-size: 12px; height: 28px; width: auto; padding: 0 10px; border-radius: 99px; display: inline-flex; align-items: center; gap: 4px; border: 0.5px solid; background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; }
   .btn-resp-yes{color:var(--ok);border-color:var(--ok)} .btn-resp-yes:hover{background:var(--ok-bg)}
   .btn-resp-no{color:var(--urgent);border-color:var(--urgent)} .btn-resp-no:hover{background:var(--urgent-bg)}
+  .btn-reactivate { font-size: 11px; height: 26px; padding: 0 10px; border-radius: 99px; border: 0.5px solid var(--border2); background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--text2); display: inline-flex; align-items: center; gap: 4px; }
+  .btn-reactivate:hover { background: var(--surface2); }
+
+  /* History search */
+  .history-search { width: 100%; height: 36px; padding: 0 12px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; margin-bottom: 1rem; }
+  .history-search:focus { border-color: var(--text2); }
+
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); }
   .empty i { font-size: 32px; display: block; margin-bottom: 10px; }
   .empty p { font-size: 14px; }
@@ -141,31 +161,48 @@
 </head>
 <body>
 
-<header>
+<div class="header-row">
   <div>
     <h1>Seguimiento de clientes</h1>
-    <p>Solo los pendientes de respuesta.</p>
+    <p>Gestiona tus contactos pendientes de respuesta.</p>
   </div>
-  <button class="btn-settings" onclick="openSettings()" title="Configuración de alertas"><i class="ti ti-settings" aria-hidden="true"></i></button>
-</header>
-
-<div class="notif-banner" id="notifBanner">
-  <i class="ti ti-bell-ringing" aria-hidden="true"></i>
-  <div id="notifBannerText"></div>
+  <button class="btn-settings" onclick="openSettings()" title="Configuración"><i class="ti ti-settings" aria-hidden="true"></i></button>
 </div>
 
-<div class="stats" id="stats"></div>
-<div class="toolbar">
-  <div class="filters" id="filters">
-    <button class="filter-btn active" data-filter="all">Todos</button>
-    <button class="filter-btn" data-filter="urgent">Vencidos</button>
-    <button class="filter-btn" data-filter="today">Hoy</button>
-    <button class="filter-btn" data-filter="soon">Próximos 3 días</button>
-    <button class="filter-btn" data-filter="high">Alta prioridad</button>
-  </div>
-  <button class="btn-new" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar cliente</button>
+<div class="tabs">
+  <button class="tab active" data-tab="active" onclick="switchTab('active', this)">
+    <i class="ti ti-users" aria-hidden="true"></i> Activos <span class="tab-count" id="countActive">0</span>
+  </button>
+  <button class="tab" data-tab="history" onclick="switchTab('history', this)">
+    <i class="ti ti-history" aria-hidden="true"></i> Historial <span class="tab-count" id="countHistory">0</span>
+  </button>
 </div>
-<div id="list"></div>
+
+<!-- ACTIVE TAB -->
+<div id="tabActive">
+  <div class="notif-banner" id="notifBanner">
+    <i class="ti ti-bell-ringing" aria-hidden="true"></i>
+    <div id="notifBannerText"></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="urgent">Vencidos</button>
+      <button class="filter-btn" data-filter="today">Hoy</button>
+      <button class="filter-btn" data-filter="soon">Próximos 3 días</button>
+      <button class="filter-btn" data-filter="high">Alta prioridad</button>
+    </div>
+    <button class="btn-new" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar cliente</button>
+  </div>
+  <div id="list"></div>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="tabHistory" style="display:none;">
+  <input class="history-search" id="histSearch" type="text" placeholder="Buscar en historial..." oninput="renderHistory()" />
+  <div id="histList"></div>
+</div>
 
 <!-- Client modal -->
 <div class="modal-overlay" id="overlay" onclick="if(event.target===this)closeModal()">
@@ -218,18 +255,15 @@
 <div class="modal-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
   <div class="modal">
     <h2>⚙️ Configuración de alertas</h2>
-
     <div class="settings-section">
       <h3><i class="ti ti-bell" aria-hidden="true"></i> Notificaciones del navegador</h3>
       <div class="settings-row">
-        <label>Activar notificaciones al abrir la app</label>
+        <label>Activar al abrir la app</label>
         <label class="toggle"><input type="checkbox" id="toggleBrowserNotif" onchange="saveBrowserNotifSetting()" /><span class="toggle-slider"></span></label>
       </div>
       <div id="notifPermStatus" style="font-size:12px;color:var(--text3);margin-top:4px;"></div>
     </div>
-
     <hr class="modal-divider" />
-
     <div class="settings-section">
       <h3><i class="ti ti-brand-slack" aria-hidden="true"></i> Slack</h3>
       <div class="settings-row">
@@ -240,19 +274,11 @@
         <label>Webhook URL de Slack</label>
         <input id="slackWebhook" type="text" placeholder="https://hooks.slack.com/services/..." oninput="saveSlackSetting()" />
       </div>
-      <div class="slack-help">
-        Para obtener tu webhook: en Slack ve a <strong>Apps → Incoming Webhooks → Add to Slack</strong>, elige el canal y copia la URL.<br>
-        <a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener">Ver guía completa →</a>
-      </div>
+      <div class="slack-help">Para obtener tu webhook: en Slack ve a <strong>Apps → Incoming Webhooks → Add to Slack</strong>, elige el canal y copia la URL.<br><a href="https://api.slack.com/messaging/webhooks" target="_blank" rel="noopener">Ver guía →</a></div>
       <div id="slackStatus"></div>
-      <div style="margin-top:10px;">
-        <button class="btn-test" onclick="testSlack()"><i class="ti ti-send" aria-hidden="true"></i> Enviar mensaje de prueba</button>
-      </div>
+      <div style="margin-top:10px;"><button class="btn-test" onclick="testSlack()"><i class="ti ti-send" aria-hidden="true"></i> Enviar mensaje de prueba</button></div>
     </div>
-
-    <div class="modal-actions">
-      <button class="btn-save" onclick="closeSettings()">Listo</button>
-    </div>
+    <div class="modal-actions"><button class="btn-save" onclick="closeSettings()">Listo</button></div>
   </div>
 </div>
 
@@ -264,303 +290,306 @@
     3: { label: 'Fase 3 — Nutrición', icon: 'heart', next: null, days: 7 },
   };
 
-  let clients = JSON.parse(localStorage.getItem('sc_clients_v2') || '[]');
+  // Migrate old data
+  function migrateData() {
+    const old = localStorage.getItem('sc_clients');
+    const v2 = localStorage.getItem('sc_clients_v2');
+    let merged = [];
+    if (old) { try { merged = merged.concat(JSON.parse(old)); } catch(e){} }
+    if (v2) { try { const v2data = JSON.parse(v2); v2data.forEach(c => { if (!merged.find(x => x.id === c.id)) merged.push(c); }); } catch(e){} }
+    return merged;
+  }
+
+  let clients = JSON.parse(localStorage.getItem('sc_clients_v3') || 'null') || migrateData();
+  let history = JSON.parse(localStorage.getItem('sc_history') || '[]');
   let settings = JSON.parse(localStorage.getItem('sc_settings') || '{}');
   let currentFilter = 'all';
+  let currentTab = 'active';
   let editingId = null;
   let expandedNotes = new Set();
   let noRespClientId = null;
 
-  function persist() { localStorage.setItem('sc_clients_v2', JSON.stringify(clients)); }
+  function persist() {
+    localStorage.setItem('sc_clients_v3', JSON.stringify(clients));
+    localStorage.setItem('sc_history', JSON.stringify(history));
+  }
   function persistSettings() { localStorage.setItem('sc_settings', JSON.stringify(settings)); }
   function todayStr() { return new Date().toISOString().split('T')[0]; }
 
   function addBusinessDays(fromStr, days) {
-    let d = new Date(fromStr + 'T00:00:00');
-    let added = 0;
-    while (added < days) {
-      d.setDate(d.getDate() + 1);
-      if (d.getDay() !== 0 && d.getDay() !== 6) added++;
-    }
+    let d = new Date(fromStr + 'T00:00:00'), added = 0;
+    while (added < days) { d.setDate(d.getDate()+1); if (d.getDay()!==0&&d.getDay()!==6) added++; }
     return d.toISOString().split('T')[0];
   }
-
-  function daysDiff(d) {
-    if (!d) return null;
-    return Math.round((new Date(d+'T00:00:00') - new Date(todayStr()+'T00:00:00')) / 86400000);
-  }
+  function daysDiff(d) { if (!d) return null; return Math.round((new Date(d+'T00:00:00')-new Date(todayStr()+'T00:00:00'))/86400000); }
   function initials(n) { return n.trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
   function colorFor(n) { let h=0; for (const c of n) h=(h*31+c.charCodeAt(0))%COLORS.length; return COLORS[h]; }
   function getStatus(c) {
-    const d = daysDiff(c.remindDate);
-    if (c.remindDate && d < 0) return 'urgent';
-    if (c.remindDate && d === 0) return 'today';
-    if (c.remindDate && d <= 3) return 'soon';
-    if (c.remindDate) return 'future';
+    const d=daysDiff(c.remindDate);
+    if(c.remindDate&&d<0)return 'urgent';
+    if(c.remindDate&&d===0)return 'today';
+    if(c.remindDate&&d<=3)return 'soon';
+    if(c.remindDate)return 'future';
     return 'normal';
   }
 
-  // ── Browser notifications ──
+  // Tabs
+  function switchTab(tab, btn) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tabActive').style.display = tab==='active'?'':'none';
+    document.getElementById('tabHistory').style.display = tab==='history'?'':'none';
+    if (tab==='history') renderHistory();
+  }
+
+  // Notifications
   async function requestNotifPermission() {
-    if (!('Notification' in window)) return 'unsupported';
-    if (Notification.permission === 'granted') return 'granted';
-    if (Notification.permission === 'denied') return 'denied';
-    const result = await Notification.requestPermission();
-    return result;
+    if(!('Notification'in window))return 'unsupported';
+    if(Notification.permission==='granted')return 'granted';
+    if(Notification.permission==='denied')return 'denied';
+    return await Notification.requestPermission();
   }
-
   function updateNotifPermStatus() {
-    const el = document.getElementById('notifPermStatus');
-    if (!('Notification' in window)) { el.textContent = 'Tu navegador no soporta notificaciones.'; return; }
-    const p = Notification.permission;
-    el.textContent = p === 'granted' ? '✓ Permiso concedido' : p === 'denied' ? '✗ Bloqueado — habilítalas en ajustes del navegador' : 'Pendiente de permiso';
-    el.style.color = p === 'granted' ? 'var(--ok)' : p === 'denied' ? 'var(--urgent)' : 'var(--text3)';
+    const el=document.getElementById('notifPermStatus');
+    if(!('Notification'in window)){el.textContent='Tu navegador no soporta notificaciones.';return;}
+    const p=Notification.permission;
+    el.textContent=p==='granted'?'✓ Permiso concedido':p==='denied'?'✗ Bloqueado — habilítalas en ajustes del navegador':'Pendiente de permiso';
+    el.style.color=p==='granted'?'var(--ok)':p==='denied'?'var(--urgent)':'var(--text3)';
   }
-
   async function saveBrowserNotifSetting() {
-    const checked = document.getElementById('toggleBrowserNotif').checked;
-    if (checked) {
-      const perm = await requestNotifPermission();
-      if (perm !== 'granted') {
-        document.getElementById('toggleBrowserNotif').checked = false;
-        updateNotifPermStatus();
-        return;
-      }
-    }
-    settings.browserNotif = checked;
-    persistSettings();
-    updateNotifPermStatus();
+    const checked=document.getElementById('toggleBrowserNotif').checked;
+    if(checked){const perm=await requestNotifPermission();if(perm!=='granted'){document.getElementById('toggleBrowserNotif').checked=false;updateNotifPermStatus();return;}}
+    settings.browserNotif=checked; persistSettings(); updateNotifPermStatus();
   }
-
   function fireBrowserNotifications() {
-    if (!settings.browserNotif) return;
-    if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    const urgent = clients.filter(c => getStatus(c) === 'urgent');
-    const today = clients.filter(c => getStatus(c) === 'today');
-    const all = [...urgent, ...today];
-    if (!all.length) return;
-    const body = all.slice(0,5).map(c => `• ${c.name} (${PHASES[c.phase||1].label})`).join('\n');
-    new Notification(`📋 Seguimiento: ${all.length} cliente${all.length!==1?'s':''} hoy`, {
-      body: body + (all.length > 5 ? `\n...y ${all.length-5} más` : ''),
-      icon: 'https://cdn.jsdelivr.net/npm/@tabler/icons/icons/users.svg'
-    });
+    if(!settings.browserNotif)return;
+    if(!('Notification'in window)||Notification.permission!=='granted')return;
+    const all=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];
+    if(!all.length)return;
+    new Notification(`📋 Seguimiento: ${all.length} cliente${all.length!==1?'s':''} hoy`,{body:all.slice(0,5).map(c=>`• ${c.name} (${PHASES[c.phase||1].label})`).join('\n')});
   }
 
-  // ── Slack ──
+  // Slack
   function saveSlackSetting() {
-    settings.slackEnabled = document.getElementById('toggleSlack').checked;
-    settings.slackWebhook = document.getElementById('slackWebhook').value.trim();
+    settings.slackEnabled=document.getElementById('toggleSlack').checked;
+    settings.slackWebhook=document.getElementById('slackWebhook').value.trim();
     persistSettings();
   }
-
   async function sendSlackMessage(text) {
-    const webhook = settings.slackWebhook;
-    if (!webhook) return false;
-    try {
-      await fetch(webhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
-      });
-      return true;
-    } catch { return false; }
+    try { await fetch(settings.slackWebhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})}); return true; }
+    catch { return false; }
   }
-
   async function testSlack() {
-    const statusEl = document.getElementById('slackStatus');
-    const webhook = document.getElementById('slackWebhook').value.trim();
-    if (!webhook) { statusEl.className='slack-status err'; statusEl.textContent='Ingresa una Webhook URL primero.'; return; }
-    statusEl.className='slack-status'; statusEl.textContent='Enviando...';
+    const statusEl=document.getElementById('slackStatus');
+    if(!document.getElementById('slackWebhook').value.trim()){statusEl.className='slack-status err';statusEl.textContent='Ingresa una Webhook URL primero.';return;}
+    statusEl.className='slack-status';statusEl.textContent='Enviando...';
     saveSlackSetting();
-    const ok = await sendSlackMessage('✅ *Seguimiento de Clientes* conectado correctamente. Los recordatorios llegarán aquí cada vez que abras la app.');
-    statusEl.className = 'slack-status ' + (ok?'ok':'err');
-    statusEl.textContent = ok ? '✓ Mensaje enviado correctamente' : '✗ Error — revisa que la URL sea correcta';
+    const ok=await sendSlackMessage('✅ *Seguimiento de Clientes* conectado correctamente.');
+    statusEl.className='slack-status '+(ok?'ok':'err');
+    statusEl.textContent=ok?'✓ Mensaje enviado':'✗ Error — revisa la URL';
   }
-
   async function fireSlackSummary() {
-    if (!settings.slackEnabled || !settings.slackWebhook) return;
-    const lastSent = settings.slackLastSent;
-    if (lastSent === todayStr()) return; // solo una vez al día
-    const urgent = clients.filter(c => getStatus(c) === 'urgent');
-    const today = clients.filter(c => getStatus(c) === 'today');
-    const soon = clients.filter(c => getStatus(c) === 'soon');
-    if (!urgent.length && !today.length && !soon.length) return;
-
-    let msg = `📋 *Seguimiento de Clientes — ${todayStr()}*\n`;
-    if (urgent.length) {
-      msg += `\n🔴 *Vencidos (${urgent.length}):*\n`;
-      urgent.forEach(c => msg += `• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);
-    }
-    if (today.length) {
-      msg += `\n🟡 *Recordar hoy (${today.length}):*\n`;
-      today.forEach(c => msg += `• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);
-    }
-    if (soon.length) {
-      msg += `\n🟢 *Próximos 3 días (${soon.length}):*\n`;
-      soon.forEach(c => msg += `• ${c.name}${c.company?' — '+c.company:''} · recordar ${c.remindDate}\n`);
-    }
-
-    const ok = await sendSlackMessage(msg);
-    if (ok) { settings.slackLastSent = todayStr(); persistSettings(); }
+    if(!settings.slackEnabled||!settings.slackWebhook)return;
+    if(settings.slackLastSent===todayStr())return;
+    const urgent=clients.filter(c=>getStatus(c)==='urgent');
+    const tod=clients.filter(c=>getStatus(c)==='today');
+    const soon=clients.filter(c=>getStatus(c)==='soon');
+    if(!urgent.length&&!tod.length&&!soon.length)return;
+    let msg=`📋 *Seguimiento de Clientes — ${todayStr()}*\n`;
+    if(urgent.length){msg+=`\n🔴 *Vencidos (${urgent.length}):*\n`;urgent.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);}
+    if(tod.length){msg+=`\n🟡 *Recordar hoy (${tod.length}):*\n`;tod.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · ${PHASES[c.phase||1].label}\n`);}
+    if(soon.length){msg+=`\n🟢 *Próximos 3 días (${soon.length}):*\n`;soon.forEach(c=>msg+=`• ${c.name}${c.company?' — '+c.company:''} · recordar ${c.remindDate}\n`);}
+    const ok=await sendSlackMessage(msg);
+    if(ok){settings.slackLastSent=todayStr();persistSettings();}
   }
 
-  // ── In-app banner ──
   function showBanner() {
-    const urgent = clients.filter(c => getStatus(c) === 'urgent');
-    const today = clients.filter(c => getStatus(c) === 'today');
-    const all = [...urgent, ...today];
-    const banner = document.getElementById('notifBanner');
-    const text = document.getElementById('notifBannerText');
-    if (!all.length) { banner.classList.remove('show'); return; }
-    const names = all.slice(0,3).map(c=>c.name).join(', ');
-    text.innerHTML = `<strong>${all.length} cliente${all.length!==1?'s':''} para hoy:</strong> ${names}${all.length>3?' y '+(all.length-3)+' más':''}`;
+    const all=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];
+    const banner=document.getElementById('notifBanner');
+    if(!all.length){banner.classList.remove('show');return;}
+    document.getElementById('notifBannerText').innerHTML=`<strong>${all.length} cliente${all.length!==1?'s':''} para hoy:</strong> ${all.slice(0,3).map(c=>c.name).join(', ')}${all.length>3?' y '+(all.length-3)+' más':''}`;
     banner.classList.add('show');
   }
 
-  // ── Settings modal ──
   function openSettings() {
-    document.getElementById('toggleBrowserNotif').checked = !!settings.browserNotif;
-    document.getElementById('toggleSlack').checked = !!settings.slackEnabled;
-    document.getElementById('slackWebhook').value = settings.slackWebhook || '';
-    document.getElementById('slackStatus').textContent = '';
+    document.getElementById('toggleBrowserNotif').checked=!!settings.browserNotif;
+    document.getElementById('toggleSlack').checked=!!settings.slackEnabled;
+    document.getElementById('slackWebhook').value=settings.slackWebhook||'';
+    document.getElementById('slackStatus').textContent='';
     updateNotifPermStatus();
     document.getElementById('settingsOverlay').classList.add('open');
   }
   function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
 
-  // ── Client modal ──
-  function openModal(id = null) {
-    editingId = id;
-    document.getElementById('modal-title').textContent = id ? 'Editar cliente' : 'Nuevo cliente';
-    if (id) {
-      const c = clients.find(x => x.id === id);
-      document.getElementById('fName').value = c.name;
-      document.getElementById('fCompany').value = c.company || '';
-      document.getElementById('fTopic').value = c.topic || '';
-      document.getElementById('fTalkDate').value = c.talkDate || '';
-      document.getElementById('fRemind').value = c.remindDate || '';
-      document.getElementById('fPhase').value = c.phase || '1';
-      document.getElementById('fPriority').value = c.priority || 'normal';
-      document.getElementById('fNote').value = c.note || '';
+  function openModal(id=null) {
+    editingId=id;
+    document.getElementById('modal-title').textContent=id?'Editar cliente':'Nuevo cliente';
+    if(id){
+      const c=clients.find(x=>x.id===id);
+      document.getElementById('fName').value=c.name;
+      document.getElementById('fCompany').value=c.company||'';
+      document.getElementById('fTopic').value=c.topic||'';
+      document.getElementById('fTalkDate').value=c.talkDate||'';
+      document.getElementById('fRemind').value=c.remindDate||'';
+      document.getElementById('fPhase').value=c.phase||'1';
+      document.getElementById('fPriority').value=c.priority||'normal';
+      document.getElementById('fNote').value=c.note||'';
     } else {
-      ['fName','fCompany','fTopic','fNote'].forEach(i => document.getElementById(i).value = '');
-      document.getElementById('fTalkDate').value = todayStr();
-      document.getElementById('fRemind').value = addBusinessDays(todayStr(), 3);
-      document.getElementById('fPhase').value = '1';
-      document.getElementById('fPriority').value = 'normal';
+      ['fName','fCompany','fTopic','fNote'].forEach(i=>document.getElementById(i).value='');
+      document.getElementById('fTalkDate').value=todayStr();
+      document.getElementById('fRemind').value=addBusinessDays(todayStr(),3);
+      document.getElementById('fPhase').value='1';
+      document.getElementById('fPriority').value='normal';
     }
     document.getElementById('overlay').classList.add('open');
-    setTimeout(() => document.getElementById('fName').focus(), 50);
+    setTimeout(()=>document.getElementById('fName').focus(),50);
   }
-  function closeModal() { document.getElementById('overlay').classList.remove('open'); editingId = null; }
+  function closeModal() { document.getElementById('overlay').classList.remove('open'); editingId=null; }
 
   function saveClient() {
-    const name = document.getElementById('fName').value.trim();
-    if (!name) { document.getElementById('fName').focus(); return; }
-    const data = {
-      name, company: document.getElementById('fCompany').value.trim(),
-      topic: document.getElementById('fTopic').value.trim(),
-      talkDate: document.getElementById('fTalkDate').value || todayStr(),
-      remindDate: document.getElementById('fRemind').value || '',
-      phase: parseInt(document.getElementById('fPhase').value),
-      priority: document.getElementById('fPriority').value,
-      note: document.getElementById('fNote').value.trim(),
-    };
-    if (editingId) {
-      const idx = clients.findIndex(c => c.id === editingId);
-      if (idx !== -1) clients[idx] = { ...clients[idx], ...data };
-    } else {
-      clients.push({ id: Date.now(), responses: [], ...data });
-    }
-    persist(); closeModal(); render();
+    const name=document.getElementById('fName').value.trim();
+    if(!name){document.getElementById('fName').focus();return;}
+    const data={name,company:document.getElementById('fCompany').value.trim(),topic:document.getElementById('fTopic').value.trim(),talkDate:document.getElementById('fTalkDate').value||todayStr(),remindDate:document.getElementById('fRemind').value||'',phase:parseInt(document.getElementById('fPhase').value),priority:document.getElementById('fPriority').value,note:document.getElementById('fNote').value.trim()};
+    if(editingId){const idx=clients.findIndex(c=>c.id===editingId);if(idx!==-1)clients[idx]={...clients[idx],...data};}
+    else{clients.push({id:Date.now(),responses:[],...data});}
+    persist();closeModal();render();
   }
 
-  function markDone(id) { clients = clients.filter(c => c.id !== id); persist(); render(); }
-  function del(id) { if (!confirm('¿Eliminar este cliente?')) return; clients = clients.filter(c => c.id !== id); persist(); render(); }
-  function toggleNote(id) { expandedNotes.has(id) ? expandedNotes.delete(id) : expandedNotes.add(id); render(); }
+  // Mark as responded → move to history
+  function markDone(id) {
+    const c=clients.find(x=>x.id===id);
+    if(!c)return;
+    history.unshift({...c, respondedAt: todayStr(), respondedPhase: c.phase});
+    clients=clients.filter(x=>x.id!==id);
+    persist();render();
+    if(currentTab==='history')renderHistory();
+  }
 
-  // ── No response modal ──
+  // Reactivate from history
+  function reactivate(idx) {
+    const c={...history[idx]};
+    delete c.respondedAt; delete c.respondedPhase;
+    c.id=Date.now();
+    c.responses=c.responses||[];
+    c.remindDate=addBusinessDays(todayStr(),3);
+    clients.push(c);
+    history.splice(idx,1);
+    persist();render();
+    if(currentTab==='history')renderHistory();
+  }
+
+  function del(id){if(!confirm('¿Eliminar este cliente?'))return;clients=clients.filter(c=>c.id!==id);persist();render();}
+  function delHistory(idx){if(!confirm('¿Eliminar del historial?'))return;history.splice(idx,1);persist();renderHistory();}
+  function toggleNote(id){expandedNotes.has(id)?expandedNotes.delete(id):expandedNotes.add(id);render();}
+
   function openNoResp(id) {
-    noRespClientId = id;
-    const c = clients.find(x => x.id === id);
-    const phase = c.phase || 1;
-    const phaseData = PHASES[phase];
-    const nextPhase = phaseData.next;
-    document.getElementById('noRespTitle').textContent = nextPhase
-      ? `No respondió → ${PHASES[nextPhase].label}` : 'No respondió (Fase 3 final)';
-    const infoSpan = document.querySelector('#noRespInfo span');
-    infoSpan.textContent = nextPhase
-      ? `Actualmente en ${phaseData.label}. Se pasará a ${PHASES[nextPhase].label}. La fecha se calculó saltando fines de semana — puedes editarla.`
-      : `Estás en la Fase 3. Se registra el intento y puedes ajustar el recordatorio.`;
-    document.getElementById('noRespDate').value = addBusinessDays(todayStr(), PHASES[nextPhase||3].days);
-    document.getElementById('noRespNote').value = '';
+    noRespClientId=id;
+    const c=clients.find(x=>x.id===id);
+    const phase=c.phase||1, phaseData=PHASES[phase], nextPhase=phaseData.next;
+    document.getElementById('noRespTitle').textContent=nextPhase?`No respondió → ${PHASES[nextPhase].label}`:'No respondió (Fase 3 final)';
+    document.querySelector('#noRespInfo span').textContent=nextPhase?`Actualmente en ${phaseData.label}. Se pasará a ${PHASES[nextPhase].label}. Fecha calculada saltando fines de semana — editable.`:`Estás en Fase 3. Se registra el intento y puedes ajustar el recordatorio.`;
+    document.getElementById('noRespDate').value=addBusinessDays(todayStr(),PHASES[nextPhase||3].days);
+    document.getElementById('noRespNote').value='';
     document.getElementById('noRespOverlay').classList.add('open');
   }
-  function closeNoRespModal() { document.getElementById('noRespOverlay').classList.remove('open'); noRespClientId = null; }
-
-  function confirmNoResp() {
-    const c = clients.find(x => x.id === noRespClientId);
-    if (!c) return;
-    const phase = c.phase || 1;
-    c.responses = c.responses || [];
-    c.responses.push({ date: todayStr(), responded: false, phase, note: document.getElementById('noRespNote').value.trim() || 'Sin respuesta' });
-    if (PHASES[phase].next) c.phase = PHASES[phase].next;
-    c.remindDate = document.getElementById('noRespDate').value;
-    persist(); closeNoRespModal(); render();
+  function closeNoRespModal(){document.getElementById('noRespOverlay').classList.remove('open');noRespClientId=null;}
+  function confirmNoResp(){
+    const c=clients.find(x=>x.id===noRespClientId);if(!c)return;
+    const phase=c.phase||1;
+    c.responses=c.responses||[];
+    c.responses.push({date:todayStr(),responded:false,phase,note:document.getElementById('noRespNote').value.trim()||'Sin respuesta'});
+    if(PHASES[phase].next)c.phase=PHASES[phase].next;
+    c.remindDate=document.getElementById('noRespDate').value;
+    persist();closeNoRespModal();render();
   }
 
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeNoRespModal(); closeSettings(); } });
-  document.getElementById('filters').addEventListener('click', e => {
-    const btn = e.target.closest('.filter-btn');
-    if (!btn) return;
-    currentFilter = btn.dataset.filter;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    render();
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();}});
+  document.getElementById('filters').addEventListener('click',e=>{
+    const btn=e.target.closest('.filter-btn');if(!btn)return;
+    currentFilter=btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');render();
   });
 
-  function render() {
-    const urgent = clients.filter(c => getStatus(c) === 'urgent').length;
-    const todayC = clients.filter(c => getStatus(c) === 'today').length;
-    document.getElementById('stats').innerHTML = `
-      <div class="stat"><div class="stat-label">Total pendientes</div><div class="stat-val">${clients.length}</div></div>
-      <div class="stat"><div class="stat-label">Vencidos</div><div class="stat-val ${urgent>0?'red':''}">${urgent}</div></div>
-      <div class="stat"><div class="stat-label">Recordar hoy</div><div class="stat-val ${todayC>0?'amber':''}">${todayC}</div></div>
-      <div class="stat"><div class="stat-label">Alta prioridad</div><div class="stat-val">${clients.filter(c=>c.priority==='high').length}</div></div>
-    `;
-    let filtered = clients;
-    if (currentFilter==='urgent') filtered=clients.filter(c=>getStatus(c)==='urgent');
-    else if (currentFilter==='today') filtered=clients.filter(c=>getStatus(c)==='today');
-    else if (currentFilter==='soon') filtered=clients.filter(c=>['today','soon'].includes(getStatus(c)));
-    else if (currentFilter==='high') filtered=clients.filter(c=>c.priority==='high');
+  function renderHistory() {
+    const q=(document.getElementById('histSearch').value||'').toLowerCase();
+    let items=history;
+    if(q)items=history.filter(c=>(c.name+' '+(c.company||'')+' '+(c.topic||'')).toLowerCase().includes(q));
+    document.getElementById('countHistory').textContent=history.length;
+    if(!items.length){
+      document.getElementById('histList').innerHTML=`<div class="empty"><i class="ti ti-history" aria-hidden="true"></i><p>${q?'Sin resultados para tu búsqueda.':'Aún no hay clientes en el historial.'}</p></div>`;
+      return;
+    }
+    document.getElementById('histList').innerHTML=items.map((c,i)=>{
+      const phase=c.respondedPhase||c.phase||1;
+      const responses=c.responses||[];
+      const respChips=responses.slice(-4).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
+      const realIdx=history.indexOf(c);
+      return `<div class="card is-done">
+        <div class="card-main">
+          <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="card-name">${c.name}</span>
+              ${c.company?`<span class="card-company">${c.company}</span>`:''}
+              <span class="badge badge-done"><i class="ti ti-check" aria-hidden="true"></i> Respondió</span>
+              <span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>
+            </div>
+            <div class="card-meta">
+              ${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}
+              ${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> Charla: ${c.talkDate}</span>`:''}
+              <span><i class="ti ti-check" aria-hidden="true"></i> Respondió: ${c.respondedAt||'—'}</span>
+            </div>
+            ${responses.length?`<div class="card-resp-log">${respChips}${responses.length>4?`<span class="resp-chip">+${responses.length-4} más</span>`:''}</div>`:''}
+            ${c.note?`<div class="card-note-wrap"><div class="card-note collapsed">${c.note}</div></div>`:''}
+          </div>
+          <div class="card-actions">
+            <button class="btn-reactivate" onclick="reactivate(${realIdx})" title="Volver a activos"><i class="ti ti-refresh" aria-hidden="true"></i> Reactivar</button>
+            <button class="btn-icon btn-trash" onclick="delHistory(${realIdx})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
-    const sorted = [...filtered].sort((a,b)=>{
+  function render() {
+    const urgent=clients.filter(c=>getStatus(c)==='urgent').length;
+    const todayC=clients.filter(c=>getStatus(c)==='today').length;
+    document.getElementById('countActive').textContent=clients.length;
+    document.getElementById('countHistory').textContent=history.length;
+    document.getElementById('stats').innerHTML=`
+      <div class="stat"><div class="stat-label">Total activos</div><div class="stat-val">${clients.length}</div></div>
+      <div class="stat"><div class="stat-label">Vencidos</div><div class="stat-val ${urgent>0?'red':''}">${urgent}</div></div>
+      <div class="stat"><div class="stat-label">Hoy</div><div class="stat-val ${todayC>0?'amber':''}">${todayC}</div></div>
+      <div class="stat"><div class="stat-label">Historial</div><div class="stat-val">${history.length}</div></div>
+    `;
+    let filtered=clients;
+    if(currentFilter==='urgent')filtered=clients.filter(c=>getStatus(c)==='urgent');
+    else if(currentFilter==='today')filtered=clients.filter(c=>getStatus(c)==='today');
+    else if(currentFilter==='soon')filtered=clients.filter(c=>['today','soon'].includes(getStatus(c)));
+    else if(currentFilter==='high')filtered=clients.filter(c=>c.priority==='high');
+    const sorted=[...filtered].sort((a,b)=>{
       const s={urgent:0,today:1,soon:2,future:3,normal:4};
       const d=s[getStatus(a)]-s[getStatus(b)];
       if(d!==0)return d;
       return a.priority==='high'&&b.priority!=='high'?-1:1;
     });
-
-    if (!sorted.length) {
-      document.getElementById('list').innerHTML=`<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentFilter==='all'?'Aún no hay clientes. Presiona "Agregar cliente" para empezar.':'No hay clientes en este filtro.'}</p></div>`;
-      return;
-    }
-
+    if(!sorted.length){document.getElementById('list').innerHTML=`<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentFilter==='all'?'Aún no hay clientes activos.':'No hay clientes en este filtro.'}</p></div>`;showBanner();return;}
     const groups={urgent:[],today:[],soon:[],future:[],normal:[]};
     sorted.forEach(c=>groups[getStatus(c)].push(c));
     const labels={urgent:'Vencidos',today:'Recordar hoy',soon:'Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
-
     let html='';
-    for (const [key,label] of Object.entries(labels)) {
-      if (!groups[key].length) continue;
+    for(const [key,label] of Object.entries(labels)){
+      if(!groups[key].length)continue;
       html+=`<div class="section-label">${label}</div>`;
       html+=groups[key].map(c=>{
-        const status=getStatus(c), diff=daysDiff(c.remindDate);
+        const status=getStatus(c),diff=daysDiff(c.remindDate);
         let timeBadge='';
-        if(status==='urgent') timeBadge=`<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
-        else if(status==='today') timeBadge=`<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
-        else if(status==='soon') timeBadge=`<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
-        else if(status==='future') timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
+        if(status==='urgent')timeBadge=`<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencido hace ${Math.abs(diff)} día${Math.abs(diff)!==1?'s':''}</span>`;
+        else if(status==='today')timeBadge=`<span class="badge badge-today"><i class="ti ti-bell" aria-hidden="true"></i> Hoy</span>`;
+        else if(status==='soon')timeBadge=`<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
+        else if(status==='future')timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
         const phase=c.phase||1;
         const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
         const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
@@ -574,11 +603,7 @@
             <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
             <div class="card-body">
               <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${timeBadge}${prioBadge}</div>
-              <div class="card-meta">
-                ${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}
-                ${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}
-                ${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}
-              </div>
+              <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
               ${respLogHtml}${noteHtml}
               <div class="card-action-row">
                 <span class="card-action-label">¿Qué pasó?</span>
@@ -600,7 +625,6 @@
     showBanner();
   }
 
-  // Init
   render();
   fireBrowserNotifications();
   fireSlackSummary();
