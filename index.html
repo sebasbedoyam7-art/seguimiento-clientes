@@ -414,8 +414,9 @@
     currentTab=tab;
     document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tabActive').style.display=tab==='active'?'':'none';
-    document.getElementById('tabHistory').style.display=tab==='history'?'':'none';
+    document.getElementById('tabActive').style.display=tab==='active'?'block':'none';
+    document.getElementById('tabHistory').style.display=tab==='history'?'block':'none';
+    document.getElementById('tabTasks').style.display=tab==='tasks'?'block':'none';
     if(tab==='history')renderHistory();
     if(tab==='tasks')renderTasks();
   }
