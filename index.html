@@ -156,6 +156,15 @@
   .empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
   .empty i{font-size:32px;display:block;margin-bottom:10px}
   .empty p{font-size:14px}
+
+  .resp-options{display:flex;flex-direction:column;gap:10px;margin-bottom:0.5rem}
+  .resp-option-btn{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--surface2);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;transition:all 0.15s;width:100%}
+  .resp-option-btn:hover{border-color:var(--text2);background:var(--surface)}
+  .resp-option-btn i{font-size:22px;color:var(--text2);flex-shrink:0;margin-top:2px}
+  .resp-option-btn div{display:flex;flex-direction:column;gap:3px}
+  .resp-option-btn strong{font-size:13px;font-weight:500;color:var(--text)}
+  .resp-option-btn span{font-size:12px;color:var(--text2)}
+  .contact-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
   @media(max-width:480px){body{padding:1.25rem 1rem 3rem}.field-row{flex-direction:column}}
 </style>
 </head>
@@ -200,6 +209,32 @@
 <div id="tabHistory" style="display:none">
   <input class="history-search" id="histSearch" type="text" placeholder="Buscar en historial..." oninput="renderHistory()" />
   <div id="histList"></div>
+</div>
+
+<!-- Response modal -->
+<div class="modal-overlay" id="respOverlay" onclick="if(event.target===this)closeRespModal()">
+  <div class="modal" style="max-width:420px">
+    <h2 id="respTitle">¿Qué tipo de respuesta fue?</h2>
+    <div class="resp-options">
+      <button class="resp-option-btn" onclick="confirmClosed()">
+        <i class="ti ti-check-circle" aria-hidden="true"></i>
+        <div><strong>Cerrado</strong><span>Ya no necesita seguimiento. Va al historial.</span></div>
+      </button>
+      <button class="resp-option-btn" onclick="showFollowUpFields()">
+        <i class="ti ti-phone-call" aria-hidden="true"></i>
+        <div><strong>Me pidió contactarlo después</strong><span>Sigue activo con nueva fecha y fase.</span></div>
+      </button>
+    </div>
+    <div id="followUpFields" style="display:none;margin-top:1rem">
+      <div class="field"><label>Nueva fecha de recordatorio</label><input id="fuDate" type="date" /></div>
+      <div class="field"><label>Fase</label>
+        <select id="fuPhase"><option value="1">Fase 1 — Primer contacto</option><option value="2">Fase 2 — Seguimiento</option><option value="3">Fase 3 — Nutrición</option></select>
+      </div>
+      <div class="field"><label>Nota (opcional)</label><input id="fuNote" type="text" placeholder="Ej: Llamar después del 20" /></div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button><button class="btn-save" onclick="confirmFollowUp()">Guardar y continuar</button></div>
+    </div>
+    <div id="respInitialActions" class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button></div>
+  </div>
 </div>
 
 <!-- Client modal -->
@@ -254,6 +289,17 @@
   </div>
 </div>
 
+<!-- Password modal -->
+<div class="modal-overlay" id="pwOverlay">
+  <div class="modal" style="max-width:360px">
+    <h2>🔒 Acceso</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">Ingresa la contraseña para continuar.</p>
+    <div class="field"><input id="pwInput" type="password" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')checkPassword()" /></div>
+    <div id="pwError" style="font-size:12px;color:var(--urgent);margin-top:-6px;margin-bottom:8px;display:none">Contraseña incorrecta.</div>
+    <div class="modal-actions"><button class="btn-save" onclick="checkPassword()">Entrar</button></div>
+  </div>
+</div>
+
 <!-- Settings modal -->
 <div class="modal-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
   <div class="modal">
@@ -262,6 +308,14 @@
       <h3><i class="ti ti-bell" aria-hidden="true"></i> Notificaciones del navegador</h3>
       <div class="settings-row"><label>Activar al abrir la app</label><label class="toggle"><input type="checkbox" id="toggleBrowserNotif" onchange="saveBrowserNotifSetting()" /><span class="toggle-slider"></span></label></div>
       <div id="notifPermStatus" style="font-size:12px;color:var(--text3);margin-top:4px"></div>
+    </div>
+    <hr class="modal-divider" />
+    <div class="settings-section">
+      <h3><i class="ti ti-lock" aria-hidden="true"></i> Contraseña</h3>
+      <div class="field"><label>Contraseña de acceso</label><input id="settingsPw" type="password" placeholder="Dejar vacío para sin contraseña" /></div>
+      <div class="field"><label>Confirmar contraseña</label><input id="settingsPw2" type="password" placeholder="Repite la contraseña" /></div>
+      <div id="pwSaveStatus" style="font-size:12px;margin-top:-4px"></div>
+      <button class="btn-test" onclick="savePassword()" style="margin-top:8px"><i class="ti ti-lock" aria-hidden="true"></i> Guardar contraseña</button>
     </div>
     <hr class="modal-divider" />
     <div class="settings-section">
@@ -403,6 +457,7 @@
     else if(status==='soon')timeBadge=`<span class="badge badge-soon">En ${diff} día${diff!==1?'s':''}</span>`;
     else if(status==='future')timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
     const phase=c.phase||1;
+    const contactBadge=c.contactCount?`<span class="contact-count"><i class="ti ti-phone" aria-hidden="true"></i> Contacto ${c.contactCount+1}</span>`:'';
     const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
     const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
     const responses=c.responses||[],comments=c.comments||[];
@@ -412,7 +467,7 @@
       <div class="card-main">
         <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
         <div class="card-body">
-          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${timeBadge}${prioBadge}</div>
+          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${contactBadge}${timeBadge}${prioBadge}</div>
           <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
           ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
           ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
@@ -515,7 +570,17 @@
 
   function showBanner(){const all=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];const banner=document.getElementById('notifBanner');if(!all.length){banner.classList.remove('show');return;}document.getElementById('notifBannerText').innerHTML=`<strong>${all.length} cliente${all.length!==1?'s':''} para hoy:</strong> ${all.slice(0,3).map(c=>c.name).join(', ')}${all.length>3?' y '+(all.length-3)+' más':''}`;banner.classList.add('show');}
 
-  function openSettings(){document.getElementById('toggleBrowserNotif').checked=!!settings.browserNotif;document.getElementById('toggleSlack').checked=!!settings.slackEnabled;document.getElementById('slackWebhook').value=settings.slackWebhook||'';document.getElementById('slackStatus').textContent='';updateNotifPermStatus();document.getElementById('settingsOverlay').classList.add('open');}
+  function savePassword(){
+    const pw=document.getElementById('settingsPw').value;
+    const pw2=document.getElementById('settingsPw2').value;
+    const st=document.getElementById('pwSaveStatus');
+    if(pw&&pw!==pw2){st.style.color='var(--urgent)';st.textContent='Las contraseñas no coinciden.';return;}
+    settings.password=pw||null;persistSettings();
+    st.style.color='var(--ok)';st.textContent=pw?'✓ Contraseña guardada.':'✓ Contraseña eliminada.';
+    setTimeout(()=>st.textContent='',2500);
+  }
+
+  function openSettings(){document.getElementById('toggleBrowserNotif').checked=!!settings.browserNotif;document.getElementById('toggleSlack').checked=!!settings.slackEnabled;document.getElementById('slackWebhook').value=settings.slackWebhook||'';document.getElementById('slackStatus').textContent='';document.getElementById('settingsPw').value='';document.getElementById('settingsPw2').value='';document.getElementById('pwSaveStatus').textContent='';updateNotifPermStatus();document.getElementById('settingsOverlay').classList.add('open');}
   function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
 
   function openModal(id=null){
@@ -610,7 +675,71 @@
     showBanner();
   }
 
+
+  // ── Password ──
+  function initPassword(){
+    const pw=settings.password;
+    if(!pw)return; // no password set
+    const session=sessionStorage.getItem('sc_unlocked');
+    if(session==='1')return;
+    document.getElementById('pwOverlay').classList.add('open');
+    setTimeout(()=>document.getElementById('pwInput').focus(),100);
+  }
+  function checkPassword(){
+    const val=document.getElementById('pwInput').value;
+    if(val===settings.password){
+      sessionStorage.setItem('sc_unlocked','1');
+      document.getElementById('pwOverlay').classList.remove('open');
+    } else {
+      document.getElementById('pwError').style.display='';
+      document.getElementById('pwInput').value='';
+      document.getElementById('pwInput').focus();
+    }
+  }
+
+  // ── Response modal ──
+  let respClientId=null;
+  function markDone(id){
+    respClientId=id;
+    const c=clients.find(x=>x.id===id);
+    document.getElementById('respTitle').textContent=`¿Qué respondió ${c.name}?`;
+    document.getElementById('followUpFields').style.display='none';
+    document.getElementById('respInitialActions').style.display='flex';
+    document.getElementById('fuDate').value=addBusinessDays(todayStr(),3);
+    document.getElementById('fuPhase').value=c.phase||1;
+    document.getElementById('fuNote').value='';
+    document.getElementById('respOverlay').classList.add('open');
+  }
+  function closeRespModal(){document.getElementById('respOverlay').classList.remove('open');respClientId=null;}
+  function showFollowUpFields(){
+    document.getElementById('followUpFields').style.display='';
+    document.getElementById('respInitialActions').style.display='none';
+  }
+  function confirmClosed(){
+    const c=clients.find(x=>x.id===respClientId);if(!c)return;
+    c.responses=c.responses||[];
+    c.responses.push({date:todayStr(),responded:true,phase:c.phase||1,note:'Cerrado ✓'});
+    c.comments=c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Contacto ${(c.contactCount||0)+1}] Cerrado — respondió y no necesita más seguimiento.`});
+    history.unshift({...c,respondedAt:todayStr(),respondedPhase:c.phase});
+    clients=clients.filter(x=>x.id!==respClientId);
+    persist();closeRespModal();render();if(currentTab==='history')renderHistory();
+  }
+  function confirmFollowUp(){
+    const c=clients.find(x=>x.id===respClientId);if(!c)return;
+    c.contactCount=(c.contactCount||0)+1;
+    c.phase=parseInt(document.getElementById('fuPhase').value);
+    c.remindDate=document.getElementById('fuDate').value;
+    const note=document.getElementById('fuNote').value.trim();
+    c.responses=c.responses||[];
+    c.responses.push({date:todayStr(),responded:true,phase:c.phase,note:'Contactar después'});
+    c.comments=c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Contacto ${c.contactCount}] Respondió — contactar después. ${note?'Nota: '+note:''}`});
+    persist();closeRespModal();render();
+  }
+
   render();
+  initPassword();
   fireBrowserNotifications();
   fireSlackSummary();
 </script>
