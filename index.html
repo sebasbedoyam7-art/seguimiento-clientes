@@ -165,6 +165,27 @@
   .resp-option-btn strong{font-size:13px;font-weight:500;color:var(--text)}
   .resp-option-btn span{font-size:12px;color:var(--text2)}
   .contact-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
+
+  /* Tasks */
+  .task-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:0.9rem 1.1rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;transition:border-color 0.15s}
+  .task-card:hover{border-color:var(--border2)}
+  .task-card.is-urgent{border-left:2.5px solid var(--urgent)}.task-card.is-today{border-left:2.5px solid var(--today)}.task-card.is-done-task{border-left:2.5px solid var(--ok);opacity:0.8}
+  .task-check{width:20px;height:20px;min-width:20px;border-radius:6px;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:all 0.15s;flex-shrink:0}
+  .task-check:hover{border-color:var(--ok);background:var(--ok-bg)}
+  .task-check.checked{background:var(--ok);border-color:var(--ok)}
+  .task-check.checked i{color:var(--bg);font-size:13px}
+  .task-check.inprogress{background:var(--today-bg);border-color:var(--today)}
+  .task-check.inprogress i{color:var(--today);font-size:13px}
+  .task-body{flex:1;min-width:0}
+  .task-title{font-size:14px;font-weight:500;color:var(--text)}
+  .task-title.done-title{text-decoration:line-through;color:var(--text3)}
+  .task-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-top:4px;align-items:center}
+  .task-meta span{display:flex;align-items:center;gap:4px}
+  .task-desc{font-size:12px;color:var(--text3);margin-top:5px;line-height:1.5}
+  .task-actions{display:flex;gap:5px;flex-shrink:0}
+  .prio-high{background:var(--urgent-bg);color:var(--urgent)}.prio-normal{background:var(--surface2);color:var(--text2)}.prio-low{background:var(--ok-bg);color:var(--ok)}
+  .task-status-btn{font-size:11px;height:24px;padding:0 8px;border-radius:99px;border:0.5px solid var(--border2);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);display:inline-flex;align-items:center;gap:3px;margin-top:5px}
+  .task-status-btn:hover{background:var(--surface2)}
   @media(max-width:480px){body{padding:1.25rem 1rem 3rem}.field-row{flex-direction:column}}
 </style>
 </head>
@@ -178,6 +199,7 @@
 <div class="tabs">
   <button class="tab active" data-tab="active" onclick="switchTab('active',this)"><i class="ti ti-users" aria-hidden="true"></i> Activos <span class="tab-count" id="countActive">0</span></button>
   <button class="tab" data-tab="history" onclick="switchTab('history',this)"><i class="ti ti-history" aria-hidden="true"></i> Historial <span class="tab-count" id="countHistory">0</span></button>
+  <button class="tab" data-tab="tasks" onclick="switchTab('tasks',this)"><i class="ti ti-check-circle" aria-hidden="true"></i> Tareas <span class="tab-count" id="countTasks">0</span></button>
 </div>
 
 <div id="tabActive">
@@ -234,6 +256,34 @@
       <div class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button><button class="btn-save" onclick="confirmFollowUp()">Guardar y continuar</button></div>
     </div>
     <div id="respInitialActions" class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button></div>
+  </div>
+</div>
+
+<div id="tabTasks" style="display:none">
+  <div class="toolbar" style="margin-bottom:1rem">
+    <div class="filters" id="taskFilters">
+      <button class="filter-btn active" data-tfilter="pending">Pendientes</button>
+      <button class="filter-btn" data-tfilter="inprogress">En progreso</button>
+      <button class="filter-btn" data-tfilter="done">Historial</button>
+    </div>
+    <button class="btn-new" onclick="openTaskModal()"><i class="ti ti-plus" aria-hidden="true"></i> Nueva tarea</button>
+  </div>
+  <div id="taskList"></div>
+</div>
+
+<!-- Task modal -->
+<div class="modal-overlay" id="taskOverlay" onclick="if(event.target===this)closeTaskModal()">
+  <div class="modal">
+    <h2 id="task-modal-title">Nueva tarea</h2>
+    <div class="field"><label>Título *</label><input id="tTitle" type="text" placeholder="Ej: Preparar propuesta para cliente X" /></div>
+    <div class="field-row">
+      <div class="field"><label>Fecha límite</label><input id="tDate" type="date" /></div>
+      <div class="field"><label>Prioridad</label>
+        <select id="tPriority"><option value="normal">Normal</option><option value="high">Alta</option><option value="low">Baja</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Descripción (opcional)</label><textarea id="tDesc" placeholder="Detalles de la tarea..."></textarea></div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeTaskModal()">Cancelar</button><button class="btn-save" onclick="saveTask()">Guardar</button></div>
   </div>
 </div>
 
@@ -367,6 +417,7 @@
     document.getElementById('tabActive').style.display=tab==='active'?'':'none';
     document.getElementById('tabHistory').style.display=tab==='history'?'':'none';
     if(tab==='history')renderHistory();
+    if(tab==='tasks')renderTasks();
   }
 
   // ── Search ──
@@ -626,7 +677,7 @@
 
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&document.getElementById('commentsOverlay').classList.contains('open'))addComment();
-    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();}
+    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();closeTaskModal();}
   });
 
   document.getElementById('filters').addEventListener('click',e=>{
@@ -675,6 +726,140 @@
     showBanner();
   }
 
+
+
+  // ── Tasks ──
+  let tasks = JSON.parse(localStorage.getItem('sc_tasks') || '[]');
+  let currentTaskFilter = 'pending';
+  let editingTaskId = null;
+
+  function persistTasks(){ localStorage.setItem('sc_tasks', JSON.stringify(tasks)); }
+
+  function openTaskModal(id=null){
+    editingTaskId=id;
+    document.getElementById('task-modal-title').textContent=id?'Editar tarea':'Nueva tarea';
+    if(id){
+      const t=tasks.find(x=>x.id===id);
+      document.getElementById('tTitle').value=t.title;
+      document.getElementById('tDate').value=t.dueDate||'';
+      document.getElementById('tPriority').value=t.priority||'normal';
+      document.getElementById('tDesc').value=t.desc||'';
+    } else {
+      ['tTitle','tDesc'].forEach(i=>document.getElementById(i).value='');
+      document.getElementById('tDate').value='';
+      document.getElementById('tPriority').value='normal';
+    }
+    document.getElementById('taskOverlay').classList.add('open');
+    setTimeout(()=>document.getElementById('tTitle').focus(),50);
+  }
+  function closeTaskModal(){ document.getElementById('taskOverlay').classList.remove('open'); editingTaskId=null; }
+
+  function saveTask(){
+    const title=document.getElementById('tTitle').value.trim();
+    if(!title){document.getElementById('tTitle').focus();return;}
+    const data={title,dueDate:document.getElementById('tDate').value||'',priority:document.getElementById('tPriority').value,desc:document.getElementById('tDesc').value.trim(),status:'pending'};
+    if(editingTaskId){
+      const idx=tasks.findIndex(t=>t.id===editingTaskId);
+      if(idx!==-1)tasks[idx]={...tasks[idx],...data,status:tasks[idx].status};
+    } else {
+      tasks.push({id:Date.now(),createdAt:todayStr(),...data});
+    }
+    persistTasks();closeTaskModal();renderTasks();
+    document.getElementById('countTasks').textContent=tasks.filter(t=>t.status!=='done').length;
+  }
+
+  function setTaskStatus(id,status){
+    const t=tasks.find(x=>x.id===id);if(!t)return;
+    if(status==='done'){t.status='done';t.doneAt=todayStr();}
+    else{t.status=status;}
+    persistTasks();renderTasks();
+    document.getElementById('countTasks').textContent=tasks.filter(t=>t.status!=='done').length;
+  }
+
+  function deleteTask(id){
+    if(!confirm('¿Eliminar esta tarea?'))return;
+    tasks=tasks.filter(t=>t.id!==id);
+    persistTasks();renderTasks();
+    document.getElementById('countTasks').textContent=tasks.filter(t=>t.status!=='done').length;
+  }
+
+  function toggleTaskDone(id){
+    const t=tasks.find(x=>x.id===id);if(!t)return;
+    setTaskStatus(id, t.status==='done'?'pending':'done');
+  }
+
+  function getTaskStatus(t){
+    const d=daysDiff(t.dueDate);
+    if(t.dueDate&&d<0)return'urgent';
+    if(t.dueDate&&d===0)return'today';
+    return'normal';
+  }
+
+  document.getElementById('taskFilters').addEventListener('click',e=>{
+    const btn=e.target.closest('.filter-btn');if(!btn||!btn.dataset.tfilter)return;
+    currentTaskFilter=btn.dataset.tfilter;
+    document.querySelectorAll('#taskFilters .filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTasks();
+  });
+
+  function renderTasks(){
+    let filtered=tasks;
+    if(currentTaskFilter==='pending')filtered=tasks.filter(t=>t.status==='pending');
+    else if(currentTaskFilter==='inprogress')filtered=tasks.filter(t=>t.status==='inprogress');
+    else if(currentTaskFilter==='done')filtered=tasks.filter(t=>t.status==='done');
+
+    const sorted=[...filtered].sort((a,b)=>{
+      if(a.status==='done'&&b.status!=='done')return 1;
+      if(b.status==='done'&&a.status!=='done')return-1;
+      const ps={urgent:0,today:1,normal:2};
+      const d=(ps[getTaskStatus(a)]||2)-(ps[getTaskStatus(b)]||2);
+      if(d!==0)return d;
+      if(a.priority==='high'&&b.priority!=='high')return-1;
+      if(b.priority==='high'&&a.priority!=='high')return 1;
+      return 0;
+    });
+
+    document.getElementById('countTasks').textContent=tasks.filter(t=>t.status!=='done').length;
+
+    if(!sorted.length){
+      document.getElementById('taskList').innerHTML=`<div class="empty"><i class="ti ti-check" aria-hidden="true"></i><p>${currentTaskFilter==='done'?'No hay tareas completadas aún.':currentTaskFilter==='inprogress'?'No hay tareas en progreso.':'No hay tareas pendientes. ¡Agrega una!'}</p></div>`;
+      return;
+    }
+
+    const prioLabels={high:'Alta',normal:'Normal',low:'Baja'};
+    document.getElementById('taskList').innerHTML=sorted.map(t=>{
+      const ts=getTaskStatus(t);
+      const isDone=t.status==='done';
+      const isInProgress=t.status==='inprogress';
+      let timeBadge='';
+      if(!isDone&&ts==='urgent')timeBadge=`<span class="badge badge-urgent"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencida</span>`;
+      else if(!isDone&&ts==='today')timeBadge=`<span class="badge badge-today"><i class="ti ti-clock" aria-hidden="true"></i> Hoy</span>`;
+      const prioBadge=`<span class="badge ${t.priority==='high'?'prio-high':t.priority==='low'?'prio-low':'prio-normal'}">${prioLabels[t.priority||'normal']}</span>`;
+      const checkClass=isDone?'checked':isInProgress?'inprogress':'';
+      const checkIcon=isDone?'<i class="ti ti-check" aria-hidden="true"></i>':isInProgress?'<i class="ti ti-player-play" aria-hidden="true"></i>':'';
+      const nextStatusBtn=isDone?''
+        :isInProgress?`<button class="task-status-btn" onclick="setTaskStatus(${t.id},'done')"><i class="ti ti-check" aria-hidden="true"></i> Completar</button>`
+        :`<button class="task-status-btn" onclick="setTaskStatus(${t.id},'inprogress')"><i class="ti ti-player-play" aria-hidden="true"></i> En progreso</button>
+           <button class="task-status-btn" onclick="setTaskStatus(${t.id},'done')" style="margin-left:4px"><i class="ti ti-check" aria-hidden="true"></i> Completar</button>`;
+      return `<div class="task-card ${!isDone&&ts==='urgent'?'is-urgent':!isDone&&ts==='today'?'is-today':isDone?'is-done-task':''}">
+        <button class="task-check ${checkClass}" onclick="toggleTaskDone(${t.id})" title="${isDone?'Reabrir':'Completar'}">${checkIcon}</button>
+        <div class="task-body">
+          <div class="task-title ${isDone?'done-title':''}">${t.title}</div>
+          <div class="task-meta">
+            ${t.dueDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${isDone?'Completada: '+t.doneAt:'Límite: '+t.dueDate}</span>`:''}
+            ${prioBadge}${timeBadge}
+          </div>
+          ${t.desc?`<div class="task-desc">${t.desc}</div>`:''}
+          ${nextStatusBtn}
+        </div>
+        <div class="task-actions">
+          ${!isDone?`<button class="btn-icon btn-edit" onclick="openTaskModal(${t.id})" title="Editar"><i class="ti ti-pencil" aria-hidden="true"></i></button>`:''}
+          <button class="btn-icon btn-trash" onclick="deleteTask(${t.id})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
+        </div>
+      </div>`;
+    }).join('');
+  }
 
   // ── Password ──
   function initPassword(){
