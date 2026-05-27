@@ -172,6 +172,8 @@
   .resp-option-btn strong{font-size:13px;font-weight:500;color:var(--text)}
   .resp-option-btn span{font-size:12px;color:var(--text2)}
   .contact-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
+  .badge-convo{background:#E8F4FF;color:#1A5FA8;border:0.5px solid #B8D8F8}
+  @media(prefers-color-scheme:dark){.badge-convo{background:rgba(30,100,200,0.15);color:#60A8F0;border-color:rgba(30,100,200,0.3)}}
 
   /* Tasks */
   .task-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:0.9rem 1.1rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;transition:border-color 0.15s}
@@ -253,6 +255,10 @@
         <i class="ti ti-phone-call" aria-hidden="true"></i>
         <div><strong>Me pidió contactarlo después</strong><span>Sigue activo con nueva fecha y fase.</span></div>
       </button>
+      <button class="resp-option-btn" onclick="showConvoFields()">
+        <i class="ti ti-messages" aria-hidden="true"></i>
+        <div><strong>En conversación</strong><span>Están hablando. Te recuerdo revisar en X días.</span></div>
+      </button>
     </div>
     <div id="followUpFields" style="display:none;margin-top:1rem">
       <div class="field"><label>Nueva fecha de recordatorio</label><input id="fuDate" type="date" /></div>
@@ -261,6 +267,15 @@
       </div>
       <div class="field"><label>Nota (opcional)</label><input id="fuNote" type="text" placeholder="Ej: Llamar después del 20" /></div>
       <div class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button><button class="btn-save" onclick="confirmFollowUp()">Guardar y continuar</button></div>
+    </div>
+    <div id="convoFields" style="display:none;margin-top:1rem">
+      <div class="phase-info"><i class="ti ti-info-circle" aria-hidden="true"></i><span>El cliente quedará marcado como "En conversación". Te recordaré revisarlo según los días que indiques.</span></div>
+      <div class="field-row">
+        <div class="field"><label>Recordarme en (días hábiles)</label><input id="convoDays" type="number" min="1" max="30" value="2" /></div>
+        <div class="field"><label>Fecha calculada</label><input id="convoDate" type="date" /></div>
+      </div>
+      <div class="field"><label>Nota (opcional)</label><input id="convoNote" type="text" placeholder="Ej: Esperando propuesta de su parte" /></div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button><button class="btn-save" onclick="confirmConvo()">Guardar</button></div>
     </div>
     <div id="respInitialActions" class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button></div>
   </div>
@@ -533,6 +548,7 @@
     else if(status==='future')timeBadge=`<span class="badge" style="background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)">En ${diff} días</span>`;
     const phase=c.phase||1;
     const contactBadge=c.contactCount?`<span class="contact-count"><i class="ti ti-phone" aria-hidden="true"></i> Contacto ${c.contactCount+1}</span>`:'';
+    const convoBadge=c.status==='convo'?`<span class="badge badge-convo"><i class="ti ti-messages" aria-hidden="true"></i> En conversación</span>`:'';
     const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
     const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
     const responses=c.responses||[],comments=c.comments||[];
@@ -542,7 +558,7 @@
       <div class="card-main">
         <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
         <div class="card-body">
-          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${contactBadge}${timeBadge}${prioBadge}</div>
+          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${convoBadge}${contactBadge}${timeBadge}${prioBadge}</div>
           <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
           ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
           ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
@@ -925,13 +941,46 @@
     const c=clients.find(x=>x.id===id);
     document.getElementById('respTitle').textContent=`¿Qué respondió ${c.name}?`;
     document.getElementById('followUpFields').style.display='none';
+    document.getElementById('convoFields').style.display='none';
     document.getElementById('respInitialActions').style.display='flex';
+    document.getElementById('convoDays').value='2';
     document.getElementById('fuDate').value=addBusinessDays(todayStr(),3);
     document.getElementById('fuPhase').value=c.phase||1;
     document.getElementById('fuNote').value='';
     document.getElementById('respOverlay').classList.add('open');
   }
-  function closeRespModal(){document.getElementById('respOverlay').classList.remove('open');respClientId=null;}
+  function showConvoFields(){
+    document.getElementById('convoFields').style.display='';
+    document.getElementById('respInitialActions').style.display='none';
+    const days=parseInt(document.getElementById('convoDays').value)||2;
+    document.getElementById('convoDate').value=addBusinessDays(todayStr(),days);
+    document.getElementById('convoDays').addEventListener('input',function(){
+      const d=parseInt(this.value)||1;
+      document.getElementById('convoDate').value=addBusinessDays(todayStr(),d);
+    },{once:false});
+  }
+
+  function confirmConvo(){
+    const c=clients.find(x=>x.id===respClientId);if(!c)return;
+    const note=document.getElementById('convoNote').value.trim();
+    const date=document.getElementById('convoDate').value;
+    c.status='convo';
+    c.remindDate=date;
+    c.contactCount=(c.contactCount||0)+1;
+    c.responses=c.responses||[];
+    c.responses.push({date:todayStr(),responded:true,phase:c.phase||1,note:'En conversación'});
+    c.comments=c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Contacto ${c.contactCount}] En conversación. Revisión agendada: ${date}. ${note?'Nota: '+note:''}`});
+    persist();closeRespModal();render();
+  }
+
+  function closeRespModal(){
+    document.getElementById('respOverlay').classList.remove('open');
+    document.getElementById('followUpFields').style.display='none';
+    document.getElementById('convoFields').style.display='none';
+    document.getElementById('respInitialActions').style.display='flex';
+    respClientId=null;
+  }
   function showFollowUpFields(){
     document.getElementById('followUpFields').style.display='';
     document.getElementById('respInitialActions').style.display='none';
@@ -949,6 +998,7 @@
   function confirmFollowUp(){
     const c=clients.find(x=>x.id===respClientId);if(!c)return;
     c.contactCount=(c.contactCount||0)+1;
+    c.status=null;
     c.phase=parseInt(document.getElementById('fuPhase').value);
     c.remindDate=document.getElementById('fuDate').value;
     const note=document.getElementById('fuNote').value.trim();
