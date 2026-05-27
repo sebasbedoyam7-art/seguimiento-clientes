@@ -112,6 +112,13 @@
   .btn-test:hover{background:var(--surface2)}
   /* Cards */
   .section-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;margin-top:1.5rem}
+  .section-block{margin-bottom:2rem}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+  .section-header-title{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:6px}
+  .section-header-count{font-size:11px;font-family:'DM Mono',monospace;background:var(--surface2);border-radius:99px;padding:1px 8px;color:var(--text3)}
+  .section-urgent .section-header-title{color:var(--urgent)}
+  .section-today .section-header-title{color:var(--today)}
+  .section-soon .section-header-title{color:var(--ok)}
   .card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:8px;transition:border-color 0.15s}
   .card:hover{border-color:var(--border2)}
   .card.is-urgent{border-left:2.5px solid var(--urgent)}.card.is-today{border-left:2.5px solid var(--today)}.card.is-done{border-left:2.5px solid var(--ok);opacity:0.85}
@@ -318,7 +325,13 @@
     <div class="phase-info" id="noRespInfo"><i class="ti ti-info-circle" aria-hidden="true"></i><span></span></div>
     <div class="field"><label>Próximo recordatorio (editable)</label><input id="noRespDate" type="date" /></div>
     <div class="field"><label>Nota sobre este intento (opcional)</label><input id="noRespNote" type="text" placeholder="Ej: Dejé mensaje de voz" /></div>
-    <div class="modal-actions"><button class="btn-cancel" onclick="closeNoRespModal()">Cancelar</button><button class="btn-save" onclick="confirmNoResp()">Confirmar y avanzar</button></div>
+    <div class="modal-actions" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <button class="btn-cancel" style="color:var(--urgent);border-color:var(--urgent)" onclick="confirmCloseNoResp()"><i class="ti ti-archive" aria-hidden="true"></i> Cerrar sin respuesta</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-cancel" onclick="closeNoRespModal()">Cancelar</button>
+        <button class="btn-save" onclick="confirmNoResp()">Avanzar fase</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -490,13 +503,23 @@
     // Group by status (preserving priority order within group)
     const groups={urgent:[],today:[],soon:[],future:[],normal:[]};
     toShow.forEach(c=>groups[getStatus(c)].push(c));
-    const labels={urgent:'🔴 Vencidos',today:'🟡 Recordar hoy',soon:'🟢 Próximos 3 días',future:'Más adelante',normal:'Sin fecha de recordatorio'};
-
+    const sectionCfg={
+      urgent:{label:'Vencidos',icon:'alert-circle',cls:'section-urgent'},
+      today:{label:'Recordar hoy',icon:'bell',cls:'section-today'},
+      soon:{label:'Próximos 3 días',icon:'clock',cls:'section-soon'},
+      future:{label:'Más adelante',icon:'calendar',cls:''},
+      normal:{label:'Sin fecha de recordatorio',icon:'minus',cls:''}
+    };
     let html='';
-    for(const [key,label] of Object.entries(labels)){
+    for(const [key,cfg] of Object.entries(sectionCfg)){
       if(!groups[key].length)continue;
-      html+=`<div class="section-label">${label}</div>`;
-      html+=groups[key].map(c=>buildCard(c)).join('');
+      html+=`<div class="section-block ${cfg.cls}">
+        <div class="section-header">
+          <span class="section-header-title"><i class="ti ti-${cfg.icon}" aria-hidden="true"></i> ${cfg.label}</span>
+          <span class="section-header-count">${groups[key].length} cliente${groups[key].length!==1?'s':''}</span>
+        </div>
+        ${groups[key].map(c=>buildCard(c)).join('')}
+      </div>`;
     }
     document.getElementById('list').innerHTML=html;
   }
@@ -666,6 +689,18 @@
     document.getElementById('noRespOverlay').classList.add('open');
   }
   function closeNoRespModal(){document.getElementById('noRespOverlay').classList.remove('open');noRespClientId=null;}
+  function confirmCloseNoResp(){
+    const c=clients.find(x=>x.id===noRespClientId);if(!c)return;
+    const phase=c.phase||1,note=document.getElementById('noRespNote').value.trim();
+    c.responses=c.responses||[];
+    c.responses.push({date:todayStr(),responded:false,phase,note:note||'Cerrado sin respuesta'});
+    c.comments=c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Contacto ${(c.contactCount||0)+1}] Cerrado sin respuesta. ${note?'Nota: '+note:''}`});
+    history.unshift({...c,respondedAt:todayStr(),respondedPhase:c.phase,closedWithoutResponse:true});
+    clients=clients.filter(x=>x.id!==noRespClientId);
+    persist();closeNoRespModal();render();if(currentTab==='history')renderHistory();
+  }
+
   function confirmNoResp(){
     const c=clients.find(x=>x.id===noRespClientId);if(!c)return;
     const phase=c.phase||1,note=document.getElementById('noRespNote').value.trim();
@@ -702,7 +737,7 @@
         <div class="card-main">
           <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
           <div class="card-body">
-            <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}<span class="badge badge-done"><i class="ti ti-check" aria-hidden="true"></i> Respondió</span><span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span></div>
+            <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${c.closedWithoutResponse ? '<span class="badge" style="background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)"><i class="ti ti-archive" aria-hidden="true"></i> Sin respuesta</span>' : '<span class="badge badge-done"><i class="ti ti-check" aria-hidden="true"></i> Respondió</span>'}<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span></div>
             <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}<span><i class="ti ti-check" aria-hidden="true"></i> Respondió: ${c.respondedAt||'—'}</span></div>
             ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
             ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
