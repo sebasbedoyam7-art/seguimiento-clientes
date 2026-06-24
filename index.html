@@ -173,6 +173,21 @@
   .resp-option-btn span{font-size:12px;color:var(--text2)}
   .contact-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
   .badge-convo{background:#E8F4FF;color:#1A5FA8;border:0.5px solid #B8D8F8}
+  .badge-proceso{background:#F0EEFF;color:#5B35A8;border:0.5px solid #C8B8F8}
+  @media(prefers-color-scheme:dark){.badge-proceso{background:rgba(100,60,200,0.15);color:#A888F8;border-color:rgba(100,60,200,0.3)}}
+  .dashboard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem}
+  .dashboard-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+  .dashboard-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+  @media(max-width:500px){.dashboard-cols{grid-template-columns:1fr}}
+  .dashboard-col-title{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+  .dashboard-col-title span{font-family:'DM Mono',monospace;background:var(--surface2);border-radius:99px;padding:1px 7px}
+  .dashboard-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border);font-size:13px}
+  .dashboard-item:last-child{border-bottom:none}
+  .dash-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+  .dash-dot.urgent{background:var(--urgent)}.dash-dot.today{background:var(--today)}.dash-dot.ok{background:var(--ok)}.dash-dot.purple{background:#7B5CF0}
+  .dashboard-item-name{font-size:13px;font-weight:500;color:var(--text)}
+  .dashboard-item-meta{font-size:11px;color:var(--text3);margin-top:1px}
+  .dashboard-empty{font-size:12px;color:var(--text3);padding:8px 0;text-align:center}
   @media(prefers-color-scheme:dark){.badge-convo{background:rgba(30,100,200,0.15);color:#60A8F0;border-color:rgba(30,100,200,0.3)}}
 
   /* Tasks */
@@ -203,6 +218,20 @@
 <div class="header-row">
   <div><h1>Seguimiento de clientes</h1><p>Gestiona tus contactos pendientes de respuesta.</p></div>
   <button class="btn-settings" onclick="openSettings()" title="Configuración"><i class="ti ti-settings" aria-hidden="true"></i></button>
+</div>
+
+<div id="dashboard" class="dashboard" style="display:none">
+  <div class="dashboard-title"><i class="ti ti-sun" aria-hidden="true"></i> Resumen del día</div>
+  <div class="dashboard-cols">
+    <div>
+      <div class="dashboard-col-title">Contactos de hoy <span id="dash-contacts-count">0</span></div>
+      <div id="dash-contacts"></div>
+    </div>
+    <div>
+      <div class="dashboard-col-title">Tareas pendientes <span id="dash-tasks-count">0</span></div>
+      <div id="dash-tasks"></div>
+    </div>
+  </div>
 </div>
 
 <div class="tabs">
@@ -306,6 +335,20 @@
     </div>
     <div class="field"><label>Descripción (opcional)</label><textarea id="tDesc" placeholder="Detalles de la tarea..."></textarea></div>
     <div class="modal-actions"><button class="btn-cancel" onclick="closeTaskModal()">Cancelar</button><button class="btn-save" onclick="saveTask()">Guardar</button></div>
+  </div>
+</div>
+
+<!-- En proceso modal -->
+<div class="modal-overlay" id="procesoOverlay" onclick="if(event.target===this)closeProcesoModal()">
+  <div class="modal" style="max-width:420px">
+    <h2><i class="ti ti-pause" aria-hidden="true"></i> En proceso</h2>
+    <div class="phase-info"><i class="ti ti-info-circle" aria-hidden="true"></i><span>El cliente está en medio de un proceso externo. Lo pausas hasta que esté listo para retomar.</span></div>
+    <div class="field"><label>¿Qué proceso está en curso?</label><input id="procesoNote" type="text" placeholder="Ej: Esperando aprobación de socio" /></div>
+    <div class="field-row">
+      <div class="field"><label>Retomar en (días hábiles)</label><input id="procesoDays" type="number" min="1" max="60" value="5" /></div>
+      <div class="field"><label>Fecha calculada</label><input id="procesoDate" type="date" /></div>
+    </div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeProcesoModal()">Cancelar</button><button class="btn-save" onclick="confirmProceso()">Guardar</button></div>
   </div>
 </div>
 
@@ -568,6 +611,7 @@
             <div class="card-action-btns">
               <button class="btn-resp btn-resp-yes" onclick="markDone(${c.id})"><i class="ti ti-check" aria-hidden="true"></i> Respondió</button>
               <button class="btn-resp btn-resp-no" onclick="openNoResp(${c.id})"><i class="ti ti-x" aria-hidden="true"></i> No respondió</button>
+              <button class="btn-resp" style="color:#7B5CF0;border-color:#7B5CF0" onclick="openProceso(${c.id})"><i class="ti ti-pause" aria-hidden="true"></i> En proceso</button>
             </div>
           </div>
         </div>
@@ -729,7 +773,7 @@
 
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&document.getElementById('commentsOverlay').classList.contains('open'))addComment();
-    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();closeTaskModal();}
+    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();closeTaskModal();closeProcesoModal();}
   });
 
   document.getElementById('filters').addEventListener('click',e=>{
@@ -776,6 +820,7 @@
     buildSortedList();
     renderCards();
     showBanner();
+    if(typeof renderDashboard==='function')renderDashboard();
   }
 
 
@@ -816,7 +861,7 @@
     } else {
       tasks.push({id:Date.now(),createdAt:todayStr(),...data});
     }
-    persistTasks();closeTaskModal();renderTasks();
+    persistTasks();closeTaskModal();renderTasks();renderDashboard();
     document.getElementById('countTasks').textContent=tasks.filter(t=>t.status!=='done').length;
   }
 
@@ -949,6 +994,53 @@
     document.getElementById('fuNote').value='';
     document.getElementById('respOverlay').classList.add('open');
   }
+  // ── En proceso ──
+  let procesoClientId=null;
+  function openProceso(id){
+    procesoClientId=id;
+    document.getElementById('procesoNote').value='';
+    document.getElementById('procesoDays').value='5';
+    document.getElementById('procesoDate').value=addBusinessDays(todayStr(),5);
+    document.getElementById('procesoDays').oninput=function(){
+      document.getElementById('procesoDate').value=addBusinessDays(todayStr(),parseInt(this.value)||1);
+    };
+    document.getElementById('procesoOverlay').classList.add('open');
+    setTimeout(()=>document.getElementById('procesoNote').focus(),50);
+  }
+  function closeProcesoModal(){document.getElementById('procesoOverlay').classList.remove('open');procesoClientId=null;}
+  function confirmProceso(){
+    const c=clients.find(x=>x.id===procesoClientId);if(!c)return;
+    const note=document.getElementById('procesoNote').value.trim();
+    const date=document.getElementById('procesoDate').value;
+    c.status='proceso';c.remindDate=date;
+    c.comments=c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[En proceso] ${note||'Sin detalle'}. Retomar: ${date}`});
+    persist();closeProcesoModal();render();
+  }
+
+  // ── Dashboard ──
+  function renderDashboard(){
+    const todayC=[...clients.filter(c=>getStatus(c)==='urgent'),...clients.filter(c=>getStatus(c)==='today')];
+    const pendT=tasks.filter(t=>t.status==='pending'||t.status==='inprogress');
+    const dash=document.getElementById('dashboard');
+    if(!todayC.length&&!pendT.length){dash.style.display='none';return;}
+    dash.style.display='';
+    document.getElementById('dash-contacts-count').textContent=todayC.length;
+    document.getElementById('dash-tasks-count').textContent=pendT.length;
+    document.getElementById('dash-contacts').innerHTML=todayC.length
+      ?todayC.slice(0,5).map(c=>{
+          const urg=getStatus(c)==='urgent';
+          return `<div class="dashboard-item"><div class="dash-dot ${urg?'urgent':'today'}"></div><div><div class="dashboard-item-name">${c.name}${c.company?' <span style="font-weight:400;color:var(--text3)">— '+c.company+'</span>':''}</div><div class="dashboard-item-meta">${PHASES[c.phase||1].label} · ${urg?'Vencido':'Hoy'}</div></div></div>`;
+        }).join('')+(todayC.length>5?`<div class="dashboard-empty">+${todayC.length-5} más</div>`:'')
+      :`<div class="dashboard-empty">Sin contactos urgentes hoy 🎉</div>`;
+    document.getElementById('dash-tasks').innerHTML=pendT.length
+      ?pendT.slice(0,5).map(t=>{
+          const urg=t.dueDate&&daysDiff(t.dueDate)<0,tod=t.dueDate&&daysDiff(t.dueDate)===0;
+          return `<div class="dashboard-item"><div class="dash-dot ${urg?'urgent':tod?'today':t.status==='inprogress'?'purple':'ok'}"></div><div><div class="dashboard-item-name">${t.title}</div><div class="dashboard-item-meta">${t.status==='inprogress'?'En progreso':t.dueDate?'Límite: '+t.dueDate:'Sin fecha'}</div></div></div>`;
+        }).join('')+(pendT.length>5?`<div class="dashboard-empty">+${pendT.length-5} más</div>`:'')
+      :`<div class="dashboard-empty">Sin tareas pendientes 🎉</div>`;
+  }
+
   function showConvoFields(){
     document.getElementById('convoFields').style.display='';
     document.getElementById('respInitialActions').style.display='none';
@@ -1010,6 +1102,7 @@
   }
 
   render();
+  renderDashboard();
   initPassword();
   fireBrowserNotifications();
   fireSlackSummary();
