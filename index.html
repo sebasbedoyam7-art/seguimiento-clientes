@@ -210,6 +210,45 @@
   .prio-high{background:var(--urgent-bg);color:var(--urgent)}.prio-normal{background:var(--surface2);color:var(--text2)}.prio-low{background:var(--ok-bg);color:var(--ok)}
   .task-status-btn{font-size:11px;height:24px;padding:0 8px;border-radius:99px;border:0.5px solid var(--border2);background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text2);display:inline-flex;align-items:center;gap:3px;margin-top:5px}
   .task-status-btn:hover{background:var(--surface2)}
+
+  /* Templates */
+  .tmpl-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:10px}
+  .tmpl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .tmpl-label{font-size:12px;font-weight:500;color:var(--text)}
+  .tmpl-textarea{width:100%;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 10px;resize:vertical;outline:none;line-height:1.6;min-height:80px}
+  .tmpl-textarea:focus{border-color:var(--text2)}
+  .tmpl-vars{font-size:11px;color:var(--text3);margin-top:4px}
+  .btn-copy-tmpl{height:28px;padding:0 12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:transparent;cursor:pointer;font-size:12px;color:var(--text2);font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px}
+  .btn-copy-tmpl:hover{background:var(--surface2)}
+  .btn-copy-tmpl.copied{color:var(--ok);border-color:var(--ok)}
+  /* Copy message button in card */
+  .btn-copy-msg{display:inline-flex;align-items:center;gap:4px;margin-top:6px;background:none;border:0.5px solid var(--border);border-radius:99px;padding:3px 10px;font-size:11px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif}
+  .btn-copy-msg:hover{border-color:var(--border2);background:var(--surface2)}
+  .btn-copy-msg.copied{color:var(--ok);border-color:var(--ok)}
+  /* Follow-up counter */
+  .followup-bar{display:flex;align-items:center;gap:6px;margin-top:6px;flex-wrap:wrap}
+  .followup-dot{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:var(--text3);background:var(--surface2)}
+  .followup-dot.done-yes{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+  .followup-dot.done-no{background:var(--urgent-bg);border-color:var(--urgent);color:var(--urgent)}
+  .followup-dot.current{border-color:var(--text2);color:var(--text);background:var(--surface)}
+  .followup-label{font-size:11px;color:var(--text3)}
+  /* KPI */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:1.5rem}
+  .kpi-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.1rem}
+  .kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+  .kpi-val{font-size:28px;font-weight:300;font-family:'DM Mono',monospace;color:var(--text)}
+  .kpi-sub{font-size:12px;color:var(--text2);margin-top:4px}
+  .kpi-section-title{font-size:13px;font-weight:500;color:var(--text);margin:1.25rem 0 0.75rem;display:flex;align-items:center;gap:6px}
+  .kpi-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px}
+  .kpi-bar-label{width:120px;color:var(--text2);font-size:12px;flex-shrink:0}
+  .kpi-bar-track{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+  .kpi-bar-fill{height:100%;border-radius:99px;background:var(--text);transition:width 0.4s}
+  .kpi-bar-fill.ok{background:var(--ok)}.kpi-bar-fill.urgent{background:var(--urgent)}.kpi-bar-fill.today{background:var(--today)}
+  .kpi-bar-pct{font-size:12px;color:var(--text2);width:36px;text-align:right;flex-shrink:0}
+  /* History month groups */
+  .hist-month-header{margin:1.5rem 0 0.75rem;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+  .hist-month-title{font-size:14px;font-weight:500;color:var(--text)}
+  .hist-month-meta{font-size:12px;color:var(--text2);margin-top:3px}
   @media(max-width:480px){body{padding:1.25rem 1rem 3rem}.field-row{flex-direction:column}}
 </style>
 </head>
@@ -238,6 +277,8 @@
   <button class="tab active" data-tab="active" onclick="switchTab('active',this)"><i class="ti ti-users" aria-hidden="true"></i> Activos <span class="tab-count" id="countActive">0</span></button>
   <button class="tab" data-tab="history" onclick="switchTab('history',this)"><i class="ti ti-history" aria-hidden="true"></i> Historial <span class="tab-count" id="countHistory">0</span></button>
   <button class="tab" data-tab="tasks" onclick="switchTab('tasks',this)"><i class="ti ti-check-circle" aria-hidden="true"></i> Tareas <span class="tab-count" id="countTasks">0</span></button>
+  <button class="tab" data-tab="kpis" onclick="switchTab('kpis',this)"><i class="ti ti-chart-bar" aria-hidden="true"></i> KPIs</button>
+  <button class="tab" data-tab="templates" onclick="switchTab('templates',this)"><i class="ti ti-template" aria-hidden="true"></i> Plantillas</button>
 </div>
 
 <div id="tabActive">
@@ -276,7 +317,7 @@
   <div class="modal" style="max-width:420px">
     <h2 id="respTitle">¿Qué tipo de respuesta fue?</h2>
     <div class="resp-options">
-      <button class="resp-option-btn" onclick="confirmClosed()">
+      <button class="resp-option-btn" onclick="showCloseReasonFields('respondio')">
         <i class="ti ti-check-circle" aria-hidden="true"></i>
         <div><strong>Cerrado</strong><span>Ya no necesita seguimiento. Va al historial.</span></div>
       </button>
@@ -305,6 +346,20 @@
       </div>
       <div class="field"><label>Nota (opcional)</label><input id="convoNote" type="text" placeholder="Ej: Esperando propuesta de su parte" /></div>
       <div class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button><button class="btn-save" onclick="confirmConvo()">Guardar</button></div>
+    </div>
+    <div id="closeReasonFields" style="display:none;margin-top:1rem">
+      <div class="field"><label>Motivo de cierre</label>
+        <select id="closeReason">
+          <option value="respondio">Respondió y avanzó</option>
+          <option value="no_interesado">No interesado</option>
+          <option value="precio">Precio</option>
+          <option value="timing">Timing / momento</option>
+          <option value="competencia">Eligió competencia</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="field"><label>Nota adicional (opcional)</label><input id="closeReasonNote" type="text" placeholder="Ej: Dijo que lo retoma en 3 meses" /></div>
+      <div class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button><button class="btn-save" onclick="confirmClosedWithReason()">Cerrar cliente</button></div>
     </div>
     <div id="respInitialActions" class="modal-actions"><button class="btn-cancel" onclick="closeRespModal()">Cancelar</button></div>
   </div>
@@ -337,6 +392,13 @@
     <div class="modal-actions"><button class="btn-cancel" onclick="closeTaskModal()">Cancelar</button><button class="btn-save" onclick="saveTask()">Guardar</button></div>
   </div>
 </div>
+
+
+<div id="tabKpis" style="display:none">
+  <div id="kpiContent"></div>
+</div>
+
+<div id="tabTemplates" style="display:none"></div>
 
 <!-- En proceso modal -->
 <div class="modal-overlay" id="procesoOverlay" onclick="if(event.target===this)closeProcesoModal()">
@@ -485,11 +547,15 @@
     currentTab=tab;
     document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tabActive').style.display=tab==='active'?'block':'none';
-    document.getElementById('tabHistory').style.display=tab==='history'?'block':'none';
-    document.getElementById('tabTasks').style.display=tab==='tasks'?'block':'none';
+    ['tabActive','tabHistory','tabTasks','tabKpis','tabTemplates'].forEach(id=>{
+      const el=document.getElementById(id);if(el)el.style.display='none';
+    });
+    const tabMap={active:'tabActive',history:'tabHistory',tasks:'tabTasks',kpis:'tabKpis',templates:'tabTemplates'};
+    const el=document.getElementById(tabMap[tab]);if(el)el.style.display='block';
     if(tab==='history')renderHistory();
     if(tab==='tasks')renderTasks();
+    if(tab==='kpis')renderKpis();
+    if(tab==='templates')renderTemplatesTab();
   }
 
   // ── Search ──
@@ -605,6 +671,8 @@
           <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
           ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
           ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
+          ${buildFollowUpBar(c)}
+          ${(()=>{ const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
           <button class="btn-comments" onclick="openComments(${c.id},false)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
           <div class="card-action-row">
             <span class="card-action-label">¿Qué pasó?</span>
@@ -751,6 +819,10 @@
   function closeNoRespModal(){document.getElementById('noRespOverlay').classList.remove('open');noRespClientId=null;}
   function confirmCloseNoResp(){
     const c=clients.find(x=>x.id===noRespClientId);if(!c)return;
+    const fu=getFollowUpCount(c);
+    if(fu<4){
+      if(!confirm(`Solo llevás ${fu} seguimiento${fu!==1?'s':''} sin respuesta. Se recomiendan 4 antes de cerrar. ¿Querés cerrar igualmente?`))return;
+    }
     const phase=c.phase||1,note=document.getElementById('noRespNote').value.trim();
     c.responses=c.responses||[];
     c.responses.push({date:todayStr(),responded:false,phase,note:note||'Cerrado sin respuesta'});
@@ -783,7 +855,231 @@
     btn.classList.add('active');render();
   });
 
+
+  // ── Templates ──
+  const DEFAULT_TEMPLATES = [
+    "Hola [Nombre], ¿cómo estás? Quería retomar el tema de [tema] que hablamos. Quedo atento por si tenés alguna duda o si querés que avancemos con el siguiente paso.",
+    "Hola [Nombre], te escribo de nuevo por si se te complicó ver el mensaje anterior. Si te sirve, puedo enviarte más información para que sea más simple avanzar cuando quieras.",
+    "Hola [Nombre], no quiero ser insistente, pero quería saber si seguís interesado en [tema]. Si por ahora no es el momento, avisame y lo retomamos más adelante sin problema.",
+    "Hola [Nombre], como no tuvimos noticias tuyas vamos a pausar el seguimiento por ahora para no molestarte. Cualquier cosa que necesites más adelante, quedamos a disposición."
+  ];
+  let templates = JSON.parse(localStorage.getItem('sc_templates') || 'null') || [...DEFAULT_TEMPLATES];
+  function persistTemplates(){ localStorage.setItem('sc_templates', JSON.stringify(templates)); }
+
+  function getFilledTemplate(idx, client){
+    let t = templates[idx] || '';
+    t = t.replace(/\[Nombre\]/g, client.name || '');
+    t = t.replace(/\[tema\]/g, client.topic || 'nuestra conversación');
+    return t;
+  }
+
+  function copyTemplate(idx, clientId, btnEl){
+    const c = clients.find(x=>x.id===clientId) || history.find(x=>x.id===clientId);
+    const text = c ? getFilledTemplate(idx, c) : templates[idx];
+    navigator.clipboard.writeText(text).then(()=>{
+      btnEl.classList.add('copied');
+      btnEl.innerHTML='<i class="ti ti-check" aria-hidden="true"></i> Copiado';
+      setTimeout(()=>{ btnEl.classList.remove('copied'); btnEl.innerHTML='<i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje'; }, 2000);
+    });
+  }
+
+  function renderTemplatesTab(){
+    const labels = ['Seguimiento 1','Seguimiento 2','Seguimiento 3','Seguimiento 4'];
+    let html = '<div style="margin-bottom:1rem"><div style="font-size:13px;color:var(--text2);margin-bottom:1rem">Edita las plantillas. Usa <strong>[Nombre]</strong> y <strong>[tema]</strong> como variables — se rellenan automáticamente desde la tarjeta del cliente.</div>';
+    labels.forEach((label,i)=>{
+      html += `<div class="tmpl-card">
+        <div class="tmpl-header"><span class="tmpl-label">${label}</span>
+          <button class="btn-copy-tmpl" onclick="saveTemplate(${i})"><i class="ti ti-device-floppy" aria-hidden="true"></i> Guardar</button>
+        </div>
+        <textarea class="tmpl-textarea" id="tmpl-${i}" onchange="templates[${i}]=this.value;persistTemplates()">${templates[i]}</textarea>
+        <div class="tmpl-vars">Variables: [Nombre] · [tema]</div>
+      </div>`;
+    });
+    html += '</div>';
+    document.getElementById('tabTemplates').innerHTML = html;
+  }
+
+  function saveTemplate(i){
+    templates[i] = document.getElementById('tmpl-'+i).value;
+    persistTemplates();
+    const btn = document.querySelector(`#tabTemplates .tmpl-card:nth-child(${i+1}) .btn-copy-tmpl`);
+    if(btn){ const orig=btn.innerHTML; btn.innerHTML='<i class="ti ti-check" aria-hidden="true"></i> Guardado'; setTimeout(()=>btn.innerHTML=orig,1500); }
+  }
+
+  // ── Follow-up counter helpers ──
+  function getFollowUpCount(c){
+    return (c.responses||[]).filter(r=>!r.responded).length;
+  }
+
+  function canCloseWithoutResponse(c){
+    return getFollowUpCount(c) >= 4;
+  }
+
+  function buildFollowUpBar(c){
+    const responses = c.responses||[];
+    const attempts = responses.filter(r=>!r.responded);
+    let html = '<div class="followup-bar">';
+    for(let i=0;i<4;i++){
+      const a = attempts[i];
+      const cls = !a ? (i===attempts.length?'current':'') : 'done-no';
+      html += `<div class="followup-dot ${cls}" title="Seguimiento ${i+1}${a?' — '+a.date:''}">${i+1}</div>`;
+    }
+    const remaining = Math.max(0, 4-attempts.length);
+    if(remaining>0) html += `<span class="followup-label">${remaining} seguimiento${remaining!==1?'s':''} restante${remaining!==1?'s':''} para cerrar sin respuesta</span>`;
+    else html += `<span class="followup-label" style="color:var(--ok)">✓ Listo para cerrar</span>`;
+    html += '</div>';
+    return html;
+  }
+
+  // ── Close with reason ──
+  function showCloseReasonFields(defaultReason){
+    document.getElementById('closeReason').value = defaultReason||'respondio';
+    document.getElementById('closeReasonNote').value = '';
+    document.getElementById('closeReasonFields').style.display = '';
+    document.getElementById('followUpFields').style.display = 'none';
+    document.getElementById('convoFields').style.display = 'none';
+    document.getElementById('respInitialActions').style.display = 'none';
+  }
+
+  function confirmClosedWithReason(){
+    const c = clients.find(x=>x.id===respClientId); if(!c) return;
+    const reason = document.getElementById('closeReason').value;
+    const note = document.getElementById('closeReasonNote').value.trim();
+    c.responses = c.responses||[];
+    c.responses.push({date:todayStr(),responded:true,phase:c.phase||1,note:'Cerrado: '+reason});
+    c.comments = c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Cierre] Motivo: ${reason}${note?'. '+note:''}`});
+    history.unshift({...c,respondedAt:todayStr(),respondedPhase:c.phase,closeReason:reason,closeNote:note,closedWithoutResponse:reason!=='respondio'});
+    clients = clients.filter(x=>x.id!==respClientId);
+    persist(); closeRespModal(); render(); if(currentTab==='history') renderHistory();
+  }
+
+  // ── KPIs ──
+  function renderKpis(){
+    const h = history;
+    const total = h.length;
+    const responded = h.filter(x=>x.closeReason==='respondio'||(!x.closedWithoutResponse&&!x.closeReason)).length;
+    const noResp = h.filter(x=>x.closedWithoutResponse||(x.closeReason&&x.closeReason!=='respondio')).length;
+    const convRate = total>0?Math.round(responded/total*100):0;
+
+    // Avg follow-ups to response
+    const withResp = h.filter(x=>!x.closedWithoutResponse&&(x.responses||[]).length>0);
+    const avgFollowups = withResp.length>0?(withResp.reduce((s,x)=>s+(x.responses||[]).length,0)/withResp.length).toFixed(1):'-';
+
+    // Avg days to close
+    const withDays = h.filter(x=>x.talkDate&&x.respondedAt);
+    const avgDays = withDays.length>0?Math.round(withDays.reduce((s,x)=>s+(new Date(x.respondedAt)-new Date(x.talkDate))/86400000,0)/withDays.length):'-';
+
+    // Active by phase
+    const byPhase = [1,2,3].map(p=>clients.filter(c=>(c.phase||1)===p).length);
+    const totalActive = clients.length||1;
+
+    // Overdue %
+    const overdueCount = clients.filter(c=>getStatus(c)==='urgent').length;
+    const overduePct = Math.round(overdueCount/totalActive*100);
+
+    // By priority
+    const highClients = h.filter(x=>x.priority==='high');
+    const highResp = highClients.filter(x=>!x.closedWithoutResponse&&(!x.closeReason||x.closeReason==='respondio')).length;
+    const highRate = highClients.length>0?Math.round(highResp/highClients.length*100):'-';
+    const normClients = h.filter(x=>x.priority!=='high');
+    const normResp = normClients.filter(x=>!x.closedWithoutResponse&&(!x.closeReason||x.closeReason==='respondio')).length;
+    const normRate = normClients.length>0?Math.round(normResp/normClients.length*100):'-';
+
+    // Close reasons distribution
+    const reasons = {respondio:0,no_interesado:0,precio:0,timing:0,competencia:0,otro:0};
+    h.forEach(x=>{ const r=x.closeReason||'respondio'; if(reasons[r]!==undefined) reasons[r]++; else reasons['otro']++; });
+
+    let html = `<div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Tasa de conversión</div><div class="kpi-val">${convRate}%</div><div class="kpi-sub">${responded} respondieron de ${total}</div></div>
+      <div class="kpi-card"><div class="kpi-label">Tiempo promedio cierre</div><div class="kpi-val">${avgDays}${avgDays!=='-'?'d':''}</div><div class="kpi-sub">Días desde primer contacto</div></div>
+      <div class="kpi-card"><div class="kpi-label">Seguimientos promedio</div><div class="kpi-val">${avgFollowups}</div><div class="kpi-sub">Objetivo: 4 antes de cerrar</div></div>
+      <div class="kpi-card"><div class="kpi-label">Vencidos</div><div class="kpi-val ${overdueCount>0?'red':''}" style="${overdueCount>0?'color:var(--urgent)':''}">${overduePct}%</div><div class="kpi-sub">${overdueCount} de ${clients.length} activos</div></div>
+    </div>`;
+
+    html += `<div class="kpi-section-title"><i class="ti ti-users" aria-hidden="true"></i> Activos por fase</div>`;
+    ['Fase 1 — Primer contacto','Fase 2 — Seguimiento','Fase 3 — Nutrición'].forEach((label,i)=>{
+      const pct = Math.round(byPhase[i]/totalActive*100);
+      html += `<div class="kpi-bar-row"><span class="kpi-bar-label">${label}</span><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:${pct}%"></div></div><span class="kpi-bar-pct">${byPhase[i]}</span></div>`;
+    });
+
+    html += `<div class="kpi-section-title"><i class="ti ti-star" aria-hidden="true"></i> Tasa de respuesta por prioridad</div>`;
+    html += `<div class="kpi-bar-row"><span class="kpi-bar-label">Alta prioridad</span><div class="kpi-bar-track"><div class="kpi-bar-fill ok" style="width:${highRate!=='-'?highRate:0}%"></div></div><span class="kpi-bar-pct">${highRate!=='-'?highRate+'%':'-'}</span></div>`;
+    html += `<div class="kpi-bar-row"><span class="kpi-bar-label">Normal</span><div class="kpi-bar-track"><div class="kpi-bar-fill" style="width:${normRate!=='-'?normRate:0}%"></div></div><span class="kpi-bar-pct">${normRate!=='-'?normRate+'%':'-'}</span></div>`;
+
+    html += `<div class="kpi-section-title"><i class="ti ti-chart-pie" aria-hidden="true"></i> Motivos de cierre</div>`;
+    const reasonLabels={respondio:'Respondió',no_interesado:'No interesado',precio:'Precio',timing:'Timing',competencia:'Competencia',otro:'Otro'};
+    Object.entries(reasons).forEach(([key,val])=>{
+      if(!val&&key!=='respondio')return;
+      const pct=total>0?Math.round(val/total*100):0;
+      html += `<div class="kpi-bar-row"><span class="kpi-bar-label">${reasonLabels[key]}</span><div class="kpi-bar-track"><div class="kpi-bar-fill ${key==='respondio'?'ok':''}" style="width:${pct}%"></div></div><span class="kpi-bar-pct">${val}</span></div>`;
+    });
+
+    if(total===0) html += '<div style="font-size:13px;color:var(--text3);text-align:center;padding:2rem">Aún no hay datos suficientes en el historial.</div>';
+
+    document.getElementById('kpiContent').innerHTML = html;
+  }
+
+  // ── Grouped history by month ──
   function renderHistory(){
+    const q=(document.getElementById('histSearch').value||'').toLowerCase();
+    let items=history;if(q)items=history.filter(c=>(c.name+' '+(c.company||'')+' '+(c.topic||'')).toLowerCase().includes(q));
+    document.getElementById('countHistory').textContent=history.length;
+    if(!items.length){document.getElementById('histList').innerHTML=`<div class="empty"><i class="ti ti-history" aria-hidden="true"></i><p>${q?'Sin resultados.':'Aún no hay clientes en el historial.'}</p></div>`;return;}
+
+    // Group by month
+    const groups={};
+    items.forEach(c=>{
+      const d=c.respondedAt||c.talkDate||'';
+      const key=d?d.substring(0,7):'sin-fecha';
+      if(!groups[key])groups[key]=[];
+      groups[key].push(c);
+    });
+    const sortedKeys=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
+    const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+    let html='';
+    sortedKeys.forEach(key=>{
+      const grp=groups[key];
+      let monthLabel=key;
+      if(key!=='sin-fecha'){const[y,m]=key.split('-');monthLabel=monthNames[parseInt(m)-1]+' '+y;}
+      const resp=grp.filter(c=>!c.closedWithoutResponse&&(!c.closeReason||c.closeReason==='respondio')).length;
+      const noR=grp.length-resp;
+      html+=`<div class="hist-month-header"><div class="hist-month-title">${monthLabel}</div><div class="hist-month-meta">${grp.length} cerrado${grp.length!==1?'s':''} · ${resp} respondieron · ${noR} sin respuesta</div></div>`;
+      html+=grp.map((c)=>{
+        const phase=c.respondedPhase||c.phase||1,responses=c.responses||[],comments=c.comments||[];
+        const respChips=responses.slice(-3).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
+        const lastComment=comments.length?comments[comments.length-1]:null;
+        const realIdx=history.indexOf(c);
+        const reasonLabels={respondio:'Respondió',no_interesado:'No interesado',precio:'Precio',timing:'Timing',competencia:'Competencia',otro:'Otro'};
+        const reasonBadge=c.closeReason&&c.closeReason!=='respondio'?`<span class="badge" style="background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)">${reasonLabels[c.closeReason]||c.closeReason}</span>`:'';
+        return `<div class="card is-done">
+          <div class="card-main">
+            <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
+            <div class="card-body">
+              <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${c.closedWithoutResponse||c.closeReason&&c.closeReason!=='respondio'?'<span class="badge" style="background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)"><i class="ti ti-archive" aria-hidden="true"></i> Sin respuesta</span>':'<span class="badge badge-done"><i class="ti ti-check" aria-hidden="true"></i> Respondió</span>'}${reasonBadge}<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span></div>
+              <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}<span><i class="ti ti-check" aria-hidden="true"></i> ${c.respondedAt||'—'}</span>${c.closeNote?`<span style="font-style:italic;color:var(--text3)">${c.closeNote}</span>`:''}</div>
+              ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
+              ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
+          ${buildFollowUpBar(c)}
+          ${(()=>{ const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
+              <button class="btn-comments" onclick="openComments(${c.id},true)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
+            </div>
+            <div class="card-actions">
+              <button class="btn-reactivate" onclick="reactivate(${realIdx})"><i class="ti ti-refresh" aria-hidden="true"></i> Reactivar</button>
+              <button class="btn-icon btn-trash" onclick="delHistory(${realIdx})" title="Eliminar"><i class="ti ti-trash" aria-hidden="true"></i></button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    });
+    document.getElementById('histList').innerHTML=html;
+  }
+
+  function renderHistory_OLD_REPLACED(){
+  }
+
+  function _renderHistory_unused(){
     const q=(document.getElementById('histSearch').value||'').toLowerCase();
     let items=history;if(q)items=history.filter(c=>(c.name+' '+(c.company||'')+' '+(c.topic||'')).toLowerCase().includes(q));
     document.getElementById('countHistory').textContent=history.length;
@@ -801,6 +1097,8 @@
             <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}<span><i class="ti ti-check" aria-hidden="true"></i> Respondió: ${c.respondedAt||'—'}</span></div>
             ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
             ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
+          ${buildFollowUpBar(c)}
+          ${(()=>{ const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
             <button class="btn-comments" onclick="openComments(${c.id},true)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
           </div>
           <div class="card-actions">
