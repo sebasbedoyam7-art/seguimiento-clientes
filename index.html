@@ -174,6 +174,8 @@
   .contact-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
   .badge-convo{background:#E8F4FF;color:#1A5FA8;border:0.5px solid #B8D8F8}
   .badge-proceso{background:#F0EEFF;color:#5B35A8;border:0.5px solid #C8B8F8}
+  .badge-cliente{background:#E8F8EE;color:#1A6645;border:0.5px solid #A8DFB8}
+  @media(prefers-color-scheme:dark){.badge-cliente{background:rgba(30,140,90,0.15);color:#40C080;border-color:rgba(30,140,90,0.3)}}
   @media(prefers-color-scheme:dark){.badge-proceso{background:rgba(100,60,200,0.15);color:#A888F8;border-color:rgba(100,60,200,0.3)}}
   .dashboard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem}
   .dashboard-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:6px}
@@ -428,6 +430,17 @@
       <div class="field"><label>Recordarme el</label><input id="fRemind" type="date" /></div>
     </div>
     <div class="field-row">
+      <div class="field"><label>Tipo de cliente</label>
+        <select id="fClientType" onchange="onClientTypeChange()">
+          <option value="lead">Lead</option>
+          <option value="cliente">Cliente activo</option>
+        </select>
+      </div>
+      <div class="field" id="fMaxFollowupsWrap" style="display:none"><label>Seguimientos a realizar</label>
+        <input id="fMaxFollowups" type="number" min="1" max="20" value="3" placeholder="Ej: 3" />
+      </div>
+    </div>
+    <div class="field-row">
       <div class="field"><label>Fase</label>
         <select id="fPhase"><option value="1">Fase 1 — Primer contacto</option><option value="2">Fase 2 — Seguimiento</option><option value="3">Fase 3 — Nutrición</option></select>
       </div>
@@ -667,12 +680,12 @@
       <div class="card-main">
         <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
         <div class="card-body">
-          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${phaseBadge}${convoBadge}${contactBadge}${timeBadge}${prioBadge}</div>
+          <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${clientTypeBadge}${phaseBadge}${convoBadge}${contactBadge}${timeBadge}${prioBadge}</div>
           <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
           ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
           ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
           ${buildFollowUpBar(c)}
-          ${(()=>{ const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
+          ${(()=>{ if(c.clientType==='cliente') return ''; const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
           <button class="btn-comments" onclick="openComments(${c.id},false)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
           <div class="card-action-row">
             <span class="card-action-label">¿Qué pasó?</span>
@@ -786,10 +799,15 @@
   function openSettings(){document.getElementById('toggleBrowserNotif').checked=!!settings.browserNotif;document.getElementById('toggleSlack').checked=!!settings.slackEnabled;document.getElementById('slackWebhook').value=settings.slackWebhook||'';document.getElementById('slackStatus').textContent='';document.getElementById('settingsPw').value='';document.getElementById('settingsPw2').value='';document.getElementById('pwSaveStatus').textContent='';updateNotifPermStatus();document.getElementById('settingsOverlay').classList.add('open');}
   function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
 
+  function onClientTypeChange(){
+    const type = document.getElementById('fClientType').value;
+    document.getElementById('fMaxFollowupsWrap').style.display = type==='cliente' ? '' : 'none';
+  }
+
   function openModal(id=null){
     editingId=id;document.getElementById('modal-title').textContent=id?'Editar cliente':'Nuevo cliente';
-    if(id){const c=clients.find(x=>x.id===id);document.getElementById('fName').value=c.name;document.getElementById('fCompany').value=c.company||'';document.getElementById('fTopic').value=c.topic||'';document.getElementById('fTalkDate').value=c.talkDate||'';document.getElementById('fRemind').value=c.remindDate||'';document.getElementById('fPhase').value=c.phase||'1';document.getElementById('fPriority').value=c.priority||'normal';document.getElementById('fNote').value='';}
-    else{['fName','fCompany','fTopic','fNote'].forEach(i=>document.getElementById(i).value='');document.getElementById('fTalkDate').value=todayStr();document.getElementById('fRemind').value=addBusinessDays(todayStr(),3);document.getElementById('fPhase').value='1';document.getElementById('fPriority').value='normal';}
+    if(id){const c=clients.find(x=>x.id===id);document.getElementById('fName').value=c.name;document.getElementById('fCompany').value=c.company||'';document.getElementById('fTopic').value=c.topic||'';document.getElementById('fTalkDate').value=c.talkDate||'';document.getElementById('fRemind').value=c.remindDate||'';document.getElementById('fPhase').value=c.phase||'1';document.getElementById('fPriority').value=c.priority||'normal';document.getElementById('fNote').value='';document.getElementById('fClientType').value=c.clientType||'lead';document.getElementById('fMaxFollowups').value=c.maxFollowups||3;onClientTypeChange();}
+    else{['fName','fCompany','fTopic','fNote'].forEach(i=>document.getElementById(i).value='');document.getElementById('fTalkDate').value=todayStr();document.getElementById('fRemind').value=addBusinessDays(todayStr(),3);document.getElementById('fPhase').value='1';document.getElementById('fPriority').value='normal';document.getElementById('fClientType').value='lead';document.getElementById('fMaxFollowups').value=3;onClientTypeChange();}
     document.getElementById('overlay').classList.add('open');setTimeout(()=>document.getElementById('fName').focus(),50);
   }
   function closeModal(){document.getElementById('overlay').classList.remove('open');editingId=null;}
@@ -797,7 +815,7 @@
   function saveClient(){
     const name=document.getElementById('fName').value.trim();if(!name){document.getElementById('fName').focus();return;}
     const noteVal=document.getElementById('fNote').value.trim();
-    const data={name,company:document.getElementById('fCompany').value.trim(),topic:document.getElementById('fTopic').value.trim(),talkDate:document.getElementById('fTalkDate').value||todayStr(),remindDate:document.getElementById('fRemind').value||'',phase:parseInt(document.getElementById('fPhase').value),priority:document.getElementById('fPriority').value};
+    const clientType=document.getElementById('fClientType').value;const data={name,company:document.getElementById('fCompany').value.trim(),topic:document.getElementById('fTopic').value.trim(),talkDate:document.getElementById('fTalkDate').value||todayStr(),remindDate:document.getElementById('fRemind').value||'',phase:parseInt(document.getElementById('fPhase').value),priority:document.getElementById('fPriority').value,clientType,maxFollowups:clientType==='cliente'?parseInt(document.getElementById('fMaxFollowups').value)||3:4};
     if(editingId){const idx=clients.findIndex(c=>c.id===editingId);if(idx!==-1)clients[idx]={...clients[idx],...data};}
     else{const nc={id:Date.now(),responses:[],comments:[],...data};if(noteVal)nc.comments.push({id:Date.now().toString(),date:nowStr(),text:noteVal});clients.push(nc);}
     persist();closeModal();render();
@@ -820,8 +838,9 @@
   function confirmCloseNoResp(){
     const c=clients.find(x=>x.id===noRespClientId);if(!c)return;
     const fu=getFollowUpCount(c);
-    if(fu<4){
-      if(!confirm(`Solo llevás ${fu} seguimiento${fu!==1?'s':''} sin respuesta. Se recomiendan 4 antes de cerrar. ¿Querés cerrar igualmente?`))return;
+    const maxFu=getMaxFollowups(c);
+    if(fu<maxFu){
+      if(!confirm(`Solo llevás ${fu} de ${maxFu} seguimiento${maxFu!==1?'s':''} requeridos. ¿Querés cerrar igualmente?`))return;
     }
     const phase=c.phase||1,note=document.getElementById('noRespNote').value.trim();
     c.responses=c.responses||[];
@@ -912,20 +931,26 @@
   }
 
   function canCloseWithoutResponse(c){
-    return getFollowUpCount(c) >= 4;
+    const max = c.clientType==='cliente' ? (c.maxFollowups||3) : 4;
+    return getFollowUpCount(c) >= max;
+  }
+  function getMaxFollowups(c){
+    return c.clientType==='cliente' ? (c.maxFollowups||3) : 4;
   }
 
   function buildFollowUpBar(c){
     const responses = c.responses||[];
     const attempts = responses.filter(r=>!r.responded);
+    const max = getMaxFollowups(c);
+    const typeLabel = c.clientType==='cliente'?'cliente activo':'lead';
     let html = '<div class="followup-bar">';
-    for(let i=0;i<4;i++){
+    for(let i=0;i<max;i++){
       const a = attempts[i];
       const cls = !a ? (i===attempts.length?'current':'') : 'done-no';
       html += `<div class="followup-dot ${cls}" title="Seguimiento ${i+1}${a?' — '+a.date:''}">${i+1}</div>`;
     }
-    const remaining = Math.max(0, 4-attempts.length);
-    if(remaining>0) html += `<span class="followup-label">${remaining} seguimiento${remaining!==1?'s':''} restante${remaining!==1?'s':''} para cerrar sin respuesta</span>`;
+    const remaining = Math.max(0, max-attempts.length);
+    if(remaining>0) html += `<span class="followup-label">${remaining} restante${remaining!==1?'s':''} de ${max} (${typeLabel})</span>`;
     else html += `<span class="followup-label" style="color:var(--ok)">✓ Listo para cerrar</span>`;
     html += '</div>';
     return html;
@@ -1062,7 +1087,7 @@
               ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
               ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
           ${buildFollowUpBar(c)}
-          ${(()=>{ const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
+          ${(()=>{ if(c.clientType==='cliente') return ''; const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
               <button class="btn-comments" onclick="openComments(${c.id},true)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
             </div>
             <div class="card-actions">
@@ -1098,7 +1123,7 @@
             ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
             ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
           ${buildFollowUpBar(c)}
-          ${(()=>{ const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
+          ${(()=>{ if(c.clientType==='cliente') return ''; const fu=getFollowUpCount(c); const tmplIdx=Math.min(fu,3); return `<button class="btn-copy-msg" id="copymsg-${c.id}" onclick="copyTemplate(${tmplIdx},${c.id},this)"><i class="ti ti-copy" aria-hidden="true"></i> Copiar mensaje seguimiento ${fu+1}</button>`; })()}
             <button class="btn-comments" onclick="openComments(${c.id},true)"><i class="ti ti-message-circle" aria-hidden="true"></i> ${comments.length?comments.length+' comentario'+(comments.length!==1?'s':''):'Agregar comentario'}</button>
           </div>
           <div class="card-actions">
