@@ -672,6 +672,7 @@
     const contactBadge=c.contactCount?`<span class="contact-count"><i class="ti ti-phone" aria-hidden="true"></i> Contacto ${c.contactCount+1}</span>`:'';
     const convoBadge=c.status==='convo'?`<span class="badge badge-convo"><i class="ti ti-messages" aria-hidden="true"></i> En conversación</span>`:'';
     const phaseBadge=`<span class="phase-badge phase-${phase}"><i class="ti ti-${PHASES[phase].icon}" aria-hidden="true"></i> ${PHASES[phase].label}</span>`;
+    const clientTypeBadge=c.clientType==='cliente'?`<span class="badge badge-cliente"><i class="ti ti-user-check" aria-hidden="true"></i> Cliente activo</span>`:'';
     const prioBadge=c.priority==='high'?`<span class="badge badge-high">Alta prioridad</span>`:'';
     const responses=c.responses||[],comments=c.comments||[];
     const respChips=responses.slice(-3).map(r=>`<span class="resp-chip ${r.responded?'yes':'no'}"><i class="ti ti-${r.responded?'check':'x'}" aria-hidden="true"></i> F${r.phase} ${r.date}</span>`).join('');
