@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--bg:#F7F6F3;--surface:#FFFFFF;--surface2:#F0EEE9;--border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);--text:#1A1917;--text2:#6B6860;--text3:#9B9890;--urgent:#C04A22;--urgent-bg:#FAECE7;--today:#A06010;--today-bg:#FEF3DC;--ok:#1A6645;--ok-bg:#E1F5EE;--radius:10px;--radius-lg:14px}
@@ -537,10 +538,12 @@
       <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.5">Descarga una copia completa de tus clientes, historial y tareas. Guárdala en Drive o tu computadora — te protege si algo falla en el navegador.</div>
       <div id="backupLastInfo" style="font-size:12px;color:var(--text3);margin-bottom:10px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-test" onclick="exportBackup()"><i class="ti ti-download" aria-hidden="true"></i> Descargar respaldo</button>
+        <button class="btn-test" onclick="exportBackup()"><i class="ti ti-file-type-json" aria-hidden="true"></i> Respaldo JSON (restaurable)</button>
+        <button class="btn-test" onclick="exportExcel()"><i class="ti ti-file-spreadsheet" aria-hidden="true"></i> Descargar en Excel</button>
         <button class="btn-test" onclick="document.getElementById('importFileInput').click()"><i class="ti ti-upload" aria-hidden="true"></i> Restaurar desde archivo</button>
         <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importBackup(event)" />
       </div>
+      <div class="slack-help" style="margin-top:8px">El respaldo <strong>JSON</strong> permite restaurar todo con un clic si algo falla. El <strong>Excel</strong> es para revisar o compartir tus datos.</div>
       <div id="importStatus" style="font-size:12px;margin-top:8px"></div>
     </div>
     <div class="modal-actions"><button class="btn-save" onclick="closeSettings()">Listo</button></div>
@@ -844,6 +847,82 @@
     updateBackupBanner();
     const statusEl = document.getElementById('importStatus');
     if(statusEl){ statusEl.style.color='var(--ok)'; statusEl.textContent='✓ Respaldo descargado correctamente.'; setTimeout(()=>statusEl.textContent='',3000); }
+  }
+
+
+  function exportExcel(){
+    if(typeof XLSX === 'undefined'){ alert('No se pudo cargar el generador de Excel. Verifica tu conexión e intenta de nuevo.'); return; }
+    const wb = XLSX.utils.book_new();
+
+    // Sheet 1: Clientes activos
+    const activeRows = clients.map(c=>({
+      'Nombre': c.name||'',
+      'Empresa': c.company||'',
+      'Tipo': c.clientType==='cliente'?'Cliente activo':'Lead',
+      'Tema': c.topic||'',
+      'Fase': PHASES[c.phase||1]?.label||'',
+      'Prioridad': c.priority==='high'?'Alta':'Normal',
+      'Estado': c.status==='convo'?'En conversación':c.status==='proceso'?'En proceso':'',
+      'Fecha de charla': c.talkDate||'',
+      'Próximo recordatorio': c.remindDate||'',
+      'Seguimientos realizados': getFollowUpCount(c),
+      'Seguimientos requeridos': getMaxFollowups(c),
+      'Último comentario': (c.comments&&c.comments.length)?c.comments[c.comments.length-1].text:'',
+      'Total comentarios': (c.comments||[]).length
+    }));
+    const wsActive = XLSX.utils.json_to_sheet(activeRows);
+    XLSX.utils.book_append_sheet(wb, wsActive, 'Clientes activos');
+
+    // Sheet 2: Historial
+    const reasonLabels={respondio:'Respondió',no_interesado:'No interesado',precio:'Precio',timing:'Timing',competencia:'Competencia',otro:'Otro'};
+    const histRows = history.map(c=>({
+      'Nombre': c.name||'',
+      'Empresa': c.company||'',
+      'Resultado': c.closedWithoutResponse||(c.closeReason&&c.closeReason!=='respondio')?'Sin respuesta':'Respondió',
+      'Motivo de cierre': reasonLabels[c.closeReason]||'',
+      'Nota de cierre': c.closeNote||'',
+      'Tema': c.topic||'',
+      'Fase al cerrar': PHASES[c.respondedPhase||c.phase||1]?.label||'',
+      'Fecha de charla': c.talkDate||'',
+      'Fecha de cierre': c.respondedAt||'',
+      'Total comentarios': (c.comments||[]).length
+    }));
+    const wsHist = XLSX.utils.json_to_sheet(histRows);
+    XLSX.utils.book_append_sheet(wb, wsHist, 'Historial');
+
+    // Sheet 3: Tareas
+    const taskRows = tasks.map(t=>({
+      'Título': t.title||'',
+      'Estado': t.status==='done'?'Completada':t.status==='inprogress'?'En progreso':'Pendiente',
+      'Prioridad': t.priority==='high'?'Alta':t.priority==='low'?'Baja':'Normal',
+      'Fecha límite': t.dueDate||'',
+      'Fecha de creación': t.createdAt||'',
+      'Fecha completada': t.doneAt||'',
+      'Descripción': t.desc||''
+    }));
+    const wsTasks = XLSX.utils.json_to_sheet(taskRows);
+    XLSX.utils.book_append_sheet(wb, wsTasks, 'Tareas');
+
+    // Sheet 4: Comentarios detallados (todos los clientes activos + historial)
+    const commentRows = [];
+    [...clients, ...history].forEach(c=>{
+      (c.comments||[]).forEach(cm=>{
+        commentRows.push({'Cliente': c.name||'', 'Empresa': c.company||'', 'Fecha': cm.date, 'Comentario': cm.text});
+      });
+    });
+    if(commentRows.length){
+      const wsComments = XLSX.utils.json_to_sheet(commentRows);
+      XLSX.utils.book_append_sheet(wb, wsComments, 'Comentarios');
+    }
+
+    const dateStr = todayStr();
+    XLSX.writeFile(wb, `seguimiento-clientes-${dateStr}.xlsx`);
+
+    settings.lastBackup = todayStr();
+    persistSettings();
+    updateBackupBanner();
+    const statusEl = document.getElementById('importStatus');
+    if(statusEl){ statusEl.style.color='var(--ok)'; statusEl.textContent='✓ Excel descargado correctamente.'; setTimeout(()=>statusEl.textContent='',3000); }
   }
 
   function importBackup(event){
