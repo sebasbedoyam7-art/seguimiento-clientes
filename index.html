@@ -310,6 +310,7 @@
       <button class="filter-btn" data-filter="today">Hoy</button>
       <button class="filter-btn" data-filter="soon">Próximos 3 días</button>
       <button class="filter-btn" data-filter="high">Alta prioridad</button>
+      <button class="filter-btn" data-filter="svc:Nueva LLC">Nueva LLC</button><button class="filter-btn" data-filter="svc:Obligaciones">Obligaciones</button><button class="filter-btn" data-filter="svc:Cierre LLC">Cierre LLC</button><button class="filter-btn" data-filter="svc:Obligación personalizada">Obligación personalizada</button><button class="filter-btn" data-filter="svc:Otro servicio">Otro servicio</button>
     </div>
     <button class="btn-new" onclick="openModal()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar cliente</button>
   </div>
@@ -434,7 +435,15 @@
       <div class="field"><label>Nombre *</label><input id="fName" type="text" placeholder="Ej: María García" /></div>
       <div class="field"><label>Empresa</label><input id="fCompany" type="text" placeholder="Ej: Acme S.A." /></div>
     </div>
-    <div class="field"><label>Tema de la charla</label><input id="fTopic" type="text" placeholder="Ej: Propuesta de diseño web" /></div>
+    <div class="field-row">
+      <div class="field"><label>Servicio buscado</label>
+        <select id="fService">
+          <option value="">Sin especificar</option>
+          <option value="Nueva LLC">Nueva LLC</option><option value="Obligaciones">Obligaciones</option><option value="Cierre LLC">Cierre LLC</option><option value="Obligación personalizada">Obligación personalizada</option><option value="Otro servicio">Otro servicio</option>
+        </select>
+      </div>
+      <div class="field"><label>Tema de la charla</label><input id="fTopic" type="text" placeholder="Ej: Propuesta de diseño web" /></div>
+    </div>
     <div class="field-row">
       <div class="field"><label>Fecha de la charla</label><input id="fTalkDate" type="date" /></div>
       <div class="field"><label>Recordarme el</label><input id="fRemind" type="date" /></div>
@@ -623,6 +632,7 @@
     else if(currentFilter==='today')base=clients.filter(c=>getStatus(c)==='today');
     else if(currentFilter==='soon')base=clients.filter(c=>['today','soon'].includes(getStatus(c)));
     else if(currentFilter==='high')base=clients.filter(c=>c.priority==='high');
+    else if(currentFilter.startsWith('svc:'))base=clients.filter(c=>c.service===currentFilter.slice(4));
     if(searchQuery){
       base=base.filter(c=>(c.name+' '+(c.company||'')+' '+(c.topic||'')+' '+((c.comments||[]).map(x=>x.text).join(' '))).toLowerCase().includes(searchQuery));
     }
@@ -706,7 +716,7 @@
         <div class="avatar ${colorFor(c.name)}">${initials(c.name)}</div>
         <div class="card-body">
           <div class="card-top"><span class="card-name">${c.name}</span>${c.company?`<span class="card-company">${c.company}</span>`:''}${clientTypeBadge}${phaseBadge}${convoBadge}${contactBadge}${timeBadge}${prioBadge}</div>
-          <div class="card-meta">${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
+          <div class="card-meta">${c.service?`<span class="topic-pill" style="background:#EAF3EC;color:#1A6645"><i class="ti ti-briefcase" aria-hidden="true"></i> ${c.service}</span>`:''}${c.topic?`<span class="topic-pill"><i class="ti ti-message-circle" aria-hidden="true"></i> ${c.topic}</span>`:''}${c.talkDate?`<span><i class="ti ti-calendar" aria-hidden="true"></i> ${c.talkDate}</span>`:''}${c.remindDate?`<span><i class="ti ti-bell" aria-hidden="true"></i> ${c.remindDate}</span>`:''}</div>
           ${responses.length?`<div class="card-resp-log">${respChips}</div>`:''}
           ${lastComment?`<div class="card-last-comment"><i class="ti ti-message card-last-comment-icon" aria-hidden="true"></i><span class="card-last-comment-text">${lastComment.text}</span><span class="card-last-comment-date">${lastComment.date}</span></div>`:''}
           ${buildFollowUpBar(c)}
@@ -859,6 +869,7 @@
       'Nombre': c.name||'',
       'Empresa': c.company||'',
       'Tipo': c.clientType==='cliente'?'Cliente activo':'Lead',
+      'Servicio buscado': c.service||'',
       'Tema': c.topic||'',
       'Fase': PHASES[c.phase||1]?.label||'',
       'Prioridad': c.priority==='high'?'Alta':'Normal',
@@ -878,6 +889,7 @@
     const histRows = history.map(c=>({
       'Nombre': c.name||'',
       'Empresa': c.company||'',
+      'Servicio buscado': c.service||'',
       'Resultado': c.closedWithoutResponse||(c.closeReason&&c.closeReason!=='respondio')?'Sin respuesta':'Respondió',
       'Motivo de cierre': reasonLabels[c.closeReason]||'',
       'Nota de cierre': c.closeNote||'',
@@ -982,8 +994,8 @@
 
   function openModal(id=null){
     editingId=id;document.getElementById('modal-title').textContent=id?'Editar cliente':'Nuevo cliente';
-    if(id){const c=clients.find(x=>x.id===id);document.getElementById('fName').value=c.name;document.getElementById('fCompany').value=c.company||'';document.getElementById('fTopic').value=c.topic||'';document.getElementById('fTalkDate').value=c.talkDate||'';document.getElementById('fRemind').value=c.remindDate||'';document.getElementById('fPhase').value=c.phase||'1';document.getElementById('fPriority').value=c.priority||'normal';document.getElementById('fNote').value='';document.getElementById('fClientType').value=c.clientType||'lead';document.getElementById('fMaxFollowups').value=c.maxFollowups||3;onClientTypeChange();}
-    else{['fName','fCompany','fTopic','fNote'].forEach(i=>document.getElementById(i).value='');document.getElementById('fTalkDate').value=todayStr();document.getElementById('fRemind').value=addBusinessDays(todayStr(),3);document.getElementById('fPhase').value='1';document.getElementById('fPriority').value='normal';document.getElementById('fClientType').value='lead';document.getElementById('fMaxFollowups').value=3;onClientTypeChange();}
+    if(id){const c=clients.find(x=>x.id===id);document.getElementById('fName').value=c.name;document.getElementById('fCompany').value=c.company||'';document.getElementById('fTopic').value=c.topic||'';document.getElementById('fService').value=c.service||'';document.getElementById('fTalkDate').value=c.talkDate||'';document.getElementById('fRemind').value=c.remindDate||'';document.getElementById('fPhase').value=c.phase||'1';document.getElementById('fPriority').value=c.priority||'normal';document.getElementById('fNote').value='';document.getElementById('fClientType').value=c.clientType||'lead';document.getElementById('fMaxFollowups').value=c.maxFollowups||3;onClientTypeChange();}
+    else{['fName','fCompany','fTopic','fNote'].forEach(i=>document.getElementById(i).value='');document.getElementById('fService').value='';document.getElementById('fTalkDate').value=todayStr();document.getElementById('fRemind').value=addBusinessDays(todayStr(),3);document.getElementById('fPhase').value='1';document.getElementById('fPriority').value='normal';document.getElementById('fClientType').value='lead';document.getElementById('fMaxFollowups').value=3;onClientTypeChange();}
     document.getElementById('overlay').classList.add('open');setTimeout(()=>document.getElementById('fName').focus(),50);
   }
   function closeModal(){document.getElementById('overlay').classList.remove('open');editingId=null;}
@@ -991,7 +1003,7 @@
   function saveClient(){
     const name=document.getElementById('fName').value.trim();if(!name){document.getElementById('fName').focus();return;}
     const noteVal=document.getElementById('fNote').value.trim();
-    const clientType=document.getElementById('fClientType').value;const data={name,company:document.getElementById('fCompany').value.trim(),topic:document.getElementById('fTopic').value.trim(),talkDate:document.getElementById('fTalkDate').value||todayStr(),remindDate:document.getElementById('fRemind').value||'',phase:parseInt(document.getElementById('fPhase').value),priority:document.getElementById('fPriority').value,clientType,maxFollowups:clientType==='cliente'?parseInt(document.getElementById('fMaxFollowups').value)||3:4};
+    const clientType=document.getElementById('fClientType').value;const data={name,company:document.getElementById('fCompany').value.trim(),topic:document.getElementById('fTopic').value.trim(),service:document.getElementById('fService').value,talkDate:document.getElementById('fTalkDate').value||todayStr(),remindDate:document.getElementById('fRemind').value||'',phase:parseInt(document.getElementById('fPhase').value),priority:document.getElementById('fPriority').value,clientType,maxFollowups:clientType==='cliente'?parseInt(document.getElementById('fMaxFollowups').value)||3:4};
     if(editingId){const idx=clients.findIndex(c=>c.id===editingId);if(idx!==-1)clients[idx]={...clients[idx],...data};}
     else{const nc={id:Date.now(),responses:[],comments:[],...data};if(noteVal)nc.comments.push({id:Date.now().toString(),date:nowStr(),text:noteVal});clients.push(nc);}
     persist();closeModal();render();
