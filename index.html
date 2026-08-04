@@ -128,11 +128,11 @@
   .card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.1rem;margin-bottom:8px;transition:border-color 0.15s}
   .card:hover{border-color:var(--border2)}
   .card.is-urgent{border-left:2.5px solid var(--urgent)}.card.is-today{border-left:2.5px solid var(--today)}.card.is-done{border-left:2.5px solid var(--ok);opacity:0.85}
-  .card.is-proceso{border-left:2.5px solid #7B5CF0;background:#F7F5FF}
-  .card.is-convo{border-left:2.5px solid #1A5FA8;background:#F0F7FF}
+  .card.is-proceso{border-left:4px solid #7C3AED;background:#EDE4FF}
+  .card.is-convo{border-left:4px solid #0284C7;background:#DBEFFF}
   @media(prefers-color-scheme:dark){
-    .card.is-proceso{background:rgba(123,92,240,0.08)}
-    .card.is-convo{background:rgba(26,95,168,0.08)}
+    .card.is-proceso{background:rgba(124,58,237,0.22);border-left-color:#A78BFA}
+    .card.is-convo{background:rgba(2,132,199,0.22);border-left-color:#38BDF8}
   }
   .card-main{display:flex;align-items:flex-start;gap:12px}
   .avatar{width:40px;height:40px;min-width:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;margin-top:1px}
@@ -184,11 +184,10 @@
   .resp-option-btn strong{font-size:13px;font-weight:500;color:var(--text)}
   .resp-option-btn span{font-size:12px;color:var(--text2)}
   .contact-count{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:0.5px solid var(--border2)}
-  .badge-convo{background:#E8F4FF;color:#1A5FA8;border:0.5px solid #B8D8F8}
-  .badge-proceso{background:#F0EEFF;color:#5B35A8;border:0.5px solid #C8B8F8}
+  .badge-convo{background:#0284C7;color:#fff;border:none}
+  .badge-proceso{background:#7C3AED;color:#fff;border:none}
   .badge-cliente{background:#E8F8EE;color:#1A6645;border:0.5px solid #A8DFB8}
   @media(prefers-color-scheme:dark){.badge-cliente{background:rgba(30,140,90,0.15);color:#40C080;border-color:rgba(30,140,90,0.3)}}
-  @media(prefers-color-scheme:dark){.badge-proceso{background:rgba(100,60,200,0.15);color:#A888F8;border-color:rgba(100,60,200,0.3)}}
   .dashboard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem}
   .dashboard-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:6px}
   .dashboard-cols{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
