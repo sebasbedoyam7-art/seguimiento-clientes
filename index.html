@@ -459,6 +459,20 @@
   </div>
 </div>
 
+<!-- Hired modal -->
+<div class="modal-overlay" id="hiredOverlay" onclick="if(event.target===this)closeHiredModal()">
+  <div class="modal" style="max-width:420px">
+    <h2><i class="ti ti-briefcase" aria-hidden="true"></i> ¡Ya contrató! 🎉</h2>
+    <div class="phase-info"><i class="ti ti-info-circle" aria-hidden="true"></i><span>El cliente pasa a "Contratado" — dejas de hacerle seguimiento de ventas y empiezas a seguir el proceso.</span></div>
+    <div class="field"><label>Etapa inicial del proceso</label>
+      <select id="hiredStage">
+        <option value="Confirmación de datos">Confirmación de datos</option><option value="Aprobación del estado">Aprobación del estado</option><option value="Espera del EIN">Espera del EIN</option><option value="EIN listo">EIN listo</option><option value="Aplicación bancaria">Aplicación bancaria</option>
+      </select>
+    </div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeHiredModal()">Cancelar</button><button class="btn-save" onclick="confirmHired()">Confirmar contratación</button></div>
+  </div>
+</div>
+
 <!-- Client modal -->
 <div class="modal-overlay" id="overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
@@ -801,6 +815,7 @@
               <button class="btn-resp btn-resp-yes" onclick="markDone(${c.id})"><i class="ti ti-check" aria-hidden="true"></i> Respondió</button>
               <button class="btn-resp btn-resp-no" onclick="openNoResp(${c.id})"><i class="ti ti-x" aria-hidden="true"></i> No respondió</button>
               <button class="btn-resp" style="color:#7B5CF0;border-color:#7B5CF0" onclick="openProceso(${c.id})"><i class="ti ti-pause" aria-hidden="true"></i> En proceso</button>
+              <button class="btn-resp" style="color:#15803D;border-color:#15803D" onclick="openHired(${c.id})"><i class="ti ti-briefcase" aria-hidden="true"></i> Ya contrató</button>
             </div>
           </div>`;
           })()}
@@ -811,6 +826,26 @@
         </div>
       </div>
     </div>`;
+  }
+
+  // ── Ya contrató ──
+  let hiredClientId=null;
+  function openHired(id){
+    hiredClientId=id;
+    document.getElementById('hiredStage').value=STAGES[0];
+    document.getElementById('hiredOverlay').classList.add('open');
+  }
+  function closeHiredModal(){document.getElementById('hiredOverlay').classList.remove('open');hiredClientId=null;}
+  function confirmHired(){
+    const c=clients.find(x=>x.id===hiredClientId);if(!c)return;
+    const stage=document.getElementById('hiredStage').value;
+    c.clientType='contratado';
+    c.stage=stage;
+    c.status=null;
+    c.remindDate=addBusinessDays(todayStr(),5);
+    c.comments=c.comments||[];
+    c.comments.push({id:Date.now().toString(),date:nowStr(),text:`[Contratación] 🎉 Cliente contratado. Etapa inicial: ${stage}.`});
+    persist();closeHiredModal();render();
   }
 
   // ── Comments ──
@@ -1128,7 +1163,7 @@
 
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)&&document.getElementById('commentsOverlay').classList.contains('open'))addComment();
-    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();closeTaskModal();closeProcesoModal();}
+    if(e.key==='Escape'){closeModal();closeNoRespModal();closeSettings();closeComments();closeTaskModal();closeProcesoModal();closeHiredModal();}
   });
 
   document.getElementById('filters').addEventListener('click',e=>{
