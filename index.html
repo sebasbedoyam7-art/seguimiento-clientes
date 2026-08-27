@@ -269,6 +269,20 @@
   .hist-month-header{margin:1.5rem 0 0.75rem;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
   .hist-month-title{font-size:14px;font-weight:500;color:var(--text)}
   .hist-month-meta{font-size:12px;color:var(--text2);margin-top:3px}
+
+  /* Planning */
+  .plan-day-block{margin-bottom:1.75rem}
+  .plan-day-header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+  .plan-day-title{font-size:15px;font-weight:500;color:var(--text)}
+  .plan-day-date{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+  .plan-day-count{font-size:11px;font-family:'DM Mono',monospace;background:var(--surface2);border-radius:99px;padding:1px 8px;color:var(--text2);margin-left:auto}
+  .plan-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border)}
+  .plan-item:last-child{border-bottom:none}
+  .plan-item-avatar{width:30px;height:30px;min-width:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500}
+  .plan-item-body{flex:1;min-width:0}
+  .plan-item-name{font-size:13px;font-weight:500;color:var(--text)}
+  .plan-item-meta{font-size:11px;color:var(--text2);margin-top:1px}
+  .plan-empty-day{font-size:12px;color:var(--text3);padding:6px 0}
   @media(max-width:480px){body{padding:1.25rem 1rem 3rem}.field-row{flex-direction:column}}
 </style>
 </head>
@@ -295,6 +309,7 @@
 
 <div class="tabs">
   <button class="tab active" data-tab="active" onclick="switchTab('active',this)"><i class="ti ti-users" aria-hidden="true"></i> Activos <span class="tab-count" id="countActive">0</span></button>
+  <button class="tab" data-tab="planning" onclick="switchTab('planning',this)"><i class="ti ti-calendar-time" aria-hidden="true"></i> Planificación</button>
   <button class="tab" data-tab="history" onclick="switchTab('history',this)"><i class="ti ti-history" aria-hidden="true"></i> Historial <span class="tab-count" id="countHistory">0</span></button>
   <button class="tab" data-tab="tasks" onclick="switchTab('tasks',this)"><i class="ti ti-check-circle" aria-hidden="true"></i> Tareas <span class="tab-count" id="countTasks">0</span></button>
   <button class="tab" data-tab="kpis" onclick="switchTab('kpis',this)"><i class="ti ti-chart-bar" aria-hidden="true"></i> KPIs</button>
@@ -331,6 +346,10 @@
   <div id="resultsInfo" class="results-info" style="display:none"></div>
   <div id="list"></div>
   <button class="load-more-btn" id="loadMoreBtn" onclick="loadMore()"><i class="ti ti-chevron-down" aria-hidden="true"></i> <span id="loadMoreText">Cargar más</span></button>
+</div>
+
+<div id="tabPlanning" style="display:none">
+  <div id="planningContent"></div>
 </div>
 
 <div id="tabHistory" style="display:none">
@@ -617,15 +636,16 @@
     currentTab=tab;
     document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    ['tabActive','tabHistory','tabTasks','tabKpis','tabTemplates'].forEach(id=>{
+    ['tabActive','tabHistory','tabTasks','tabKpis','tabTemplates','tabPlanning'].forEach(id=>{
       const el=document.getElementById(id);if(el)el.style.display='none';
     });
-    const tabMap={active:'tabActive',history:'tabHistory',tasks:'tabTasks',kpis:'tabKpis',templates:'tabTemplates'};
+    const tabMap={active:'tabActive',history:'tabHistory',tasks:'tabTasks',kpis:'tabKpis',templates:'tabTemplates',planning:'tabPlanning'};
     const el=document.getElementById(tabMap[tab]);if(el)el.style.display='block';
     if(tab==='history')renderHistory();
     if(tab==='tasks')renderTasks();
     if(tab==='kpis')renderKpis();
     if(tab==='templates')renderTemplatesTab();
+    if(tab==='planning')renderPlanning();
   }
 
   // ── Search ──
@@ -1406,6 +1426,106 @@
         </div>
       </div>`;
     }).join('');
+  }
+
+
+  // ── Planning view ──
+  function renderPlanning(){
+    const buckets = [
+      {key:'today', label:'Hoy', days:0},
+      {key:'tomorrow', label:'Mañana', days:1},
+      {key:'in3', label:'En 3 días', days:3},
+      {key:'in7', label:'En 7 días', days:7},
+      {key:'in14', label:'En 14 días', days:14},
+      {key:'in30', label:'En 30 días', days:30},
+    ];
+    const overdue = clients.filter(c=>c.remindDate && daysDiff(c.remindDate)<0)
+      .sort((a,b)=>daysDiff(a.remindDate)-daysDiff(b.remindDate));
+    const noDate = clients.filter(c=>!c.remindDate);
+
+    let html = '';
+
+    if(overdue.length){
+      html += `<div class="plan-day-block">
+        <div class="plan-day-header">
+          <span class="plan-day-title" style="color:var(--urgent)"><i class="ti ti-alert-circle" aria-hidden="true"></i> Vencidos</span>
+          <span class="plan-day-count">${overdue.length}</span>
+        </div>
+        ${overdue.map(c=>planItemHtml(c)).join('')}
+      </div>`;
+    }
+
+    // Group clients by exact remindDate for near buckets, then wider windows for far ones
+    const byExactDate = {};
+    clients.forEach(c=>{
+      if(!c.remindDate) return;
+      const d = daysDiff(c.remindDate);
+      if(d>=0 && d<=14){
+        if(!byExactDate[c.remindDate]) byExactDate[c.remindDate]=[];
+        byExactDate[c.remindDate].push(c);
+      }
+    });
+    const sortedDates = Object.keys(byExactDate).sort();
+    const todayD = todayStr();
+    const dayNames=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const monthNames=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+    sortedDates.forEach(dateStr=>{
+      const d = daysDiff(dateStr);
+      const dateObj = new Date(dateStr+'T00:00:00');
+      let label = d===0?'Hoy':d===1?'Mañana':`${dayNames[dateObj.getDay()]}`;
+      const dateLabel = `${dateObj.getDate()} ${monthNames[dateObj.getMonth()]}`;
+      const items = byExactDate[dateStr].sort((a,b)=>(b.priority==='high')-(a.priority==='high'));
+      html += `<div class="plan-day-block">
+        <div class="plan-day-header">
+          <span class="plan-day-title">${label}</span>
+          <span class="plan-day-date">${dateLabel}</span>
+          <span class="plan-day-count">${items.length}</span>
+        </div>
+        ${items.map(c=>planItemHtml(c)).join('')}
+      </div>`;
+    });
+
+    // Beyond 14 days: show as a single "Más adelante" block, sorted
+    const beyond = clients.filter(c=>c.remindDate && daysDiff(c.remindDate)>14).sort((a,b)=>daysDiff(a.remindDate)-daysDiff(b.remindDate));
+    if(beyond.length){
+      html += `<div class="plan-day-block">
+        <div class="plan-day-header">
+          <span class="plan-day-title">Más adelante</span>
+          <span class="plan-day-count">${beyond.length}</span>
+        </div>
+        ${beyond.map(c=>planItemHtml(c,true)).join('')}
+      </div>`;
+    }
+
+    if(noDate.length){
+      html += `<div class="plan-day-block">
+        <div class="plan-day-header">
+          <span class="plan-day-title" style="color:var(--text3)">Sin fecha de recordatorio</span>
+          <span class="plan-day-count">${noDate.length}</span>
+        </div>
+        ${noDate.map(c=>planItemHtml(c)).join('')}
+      </div>`;
+    }
+
+    if(!overdue.length && !sortedDates.length && !beyond.length && !noDate.length){
+      html = `<div class="empty"><i class="ti ti-calendar-check" aria-hidden="true"></i><p>No hay clientes activos para planificar.</p></div>`;
+    }
+
+    document.getElementById('planningContent').innerHTML = html;
+  }
+
+  function planItemHtml(c, showDate){
+    const phase=c.phase||1;
+    const typeLabel = c.clientType==='cliente'?'Cliente activo':c.clientType==='contratado'?('Contratado — '+(c.stage||'')):PHASES[phase].label;
+    const dateInfo = showDate ? ` · ${c.remindDate}` : '';
+    return `<div class="plan-item">
+      <div class="plan-item-avatar ${colorFor(c.name)}">${initials(c.name)}</div>
+      <div class="plan-item-body">
+        <div class="plan-item-name">${c.name}${c.company?` <span style="font-weight:400;color:var(--text3)">— ${c.company}</span>`:''}</div>
+        <div class="plan-item-meta">${typeLabel}${c.service?' · '+c.service:''}${dateInfo}</div>
+      </div>
+    </div>`;
   }
 
   function render(){
